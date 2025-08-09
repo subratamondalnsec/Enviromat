@@ -36,9 +36,6 @@ dist-ssr
 
 
 
-src/components/core/Home/AnimatedNumberTicker.jsx
-src/components/core/Home/HeroSection.jsx
-src/components/core/Home/LegacySection.jsx
 src/components/core/Home/Marquee.jsx
 src/components/core/Home/ProTeamCard.jsx
 src/components/core/Home/ServicesCard.jsx
