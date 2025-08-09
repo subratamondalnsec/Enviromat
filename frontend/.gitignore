@@ -42,9 +42,7 @@ dist-ssr
 
 
 
-src/Pages/Services.jsx
-src/Pages/Shop.jsx
-src/Pages/SIgnUp.jsx
+
 src/Pages/UpdatePassword.jsx
 src/Pages/UserProfile_NEW.jsx
 src/Pages/UserProfile.jsx
