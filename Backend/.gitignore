@@ -148,9 +148,7 @@ node_modules/
 
 
 
-src/routes/user.js
-src/routes/wasteRoute.js
-src/utils/
+
 src/utils/imageUploader.js
 src/utils/mailSender.js
 src/utils/tokenGenerator.js
