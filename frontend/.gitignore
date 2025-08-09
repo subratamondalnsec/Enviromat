@@ -29,13 +29,7 @@ dist-ssr
 # Ignoring all files and folders in the 'frontend' directory
 
 # Ignoring the 'public' folder and its contents
-public/
-public/Coin.png
-public/Logo.png
-public/Logo2.png
-public/Product/
-public/Product/recycled-item1.jpg
-public/Product/recycled-item10.jpg
+
 public/Product/recycled-item11.jpg
 public/Product/recycled-item12.jpg
 public/Product/recycled-item2.jpg
