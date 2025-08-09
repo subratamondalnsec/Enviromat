@@ -147,8 +147,6 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/controllers/ResetPassword.js
-src/controllers/UserProfile.js
 src/mail/
 src/mail/templates/
 src/mail/templates/adminContactNotification.js
