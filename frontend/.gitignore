@@ -43,13 +43,6 @@ dist-ssr
 
 
 
-
-src/Pages/VerifyEmail.jsx
-
-# Ignoring the 'reducer' folder and its contents
-src/reducer/
-src/reducer/index.js
-
 # Ignoring the 'services' folder and its contents
 src/services/
 src/services/apiConnector.js
