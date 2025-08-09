@@ -34,8 +34,7 @@ dist-ssr
 
 # Ignoring the 'src' folder and its contents
 
-src/components/core/Checkout/CartItems.jsx
-src/components/core/Checkout/CheckoutHeader.jsx
+
 src/components/core/Checkout/CoinPaymentOption.jsx
 src/components/core/Checkout/EcoOption.jsx
 src/components/core/Checkout/OrderSummary.jsx
