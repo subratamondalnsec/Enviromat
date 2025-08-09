@@ -36,13 +36,6 @@ dist-ssr
 
 
 
-
-
-src/components/core/Checkout/ShippingOption.jsx
-src/components/core/Community/
-src/components/core/Community/BlogDetailsModal.jsx
-src/components/core/Community/BlogFilters.jsx
-src/components/core/Community/CreatePost.jsx
 src/components/core/Community/EditPostModal.jsx
 src/components/core/Community/PostCard.jsx
 src/components/core/Home/
