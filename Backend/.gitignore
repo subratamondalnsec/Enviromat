@@ -138,17 +138,3 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 node_modules/
-
-# This .gitignore file is configured to ignore all files and folders inside the 'Backend' directory.
-# Each file and folder path is explicitly listed to ensure they are ignored by Git.
-
-# Ignoring all files and folders in the 'Backend' directory
-
-# Ignoring the 'src' folder and its contents
-
-
-
-
-src/utils/imageUploader.js
-src/utils/mailSender.js
-src/utils/tokenGenerator.js
