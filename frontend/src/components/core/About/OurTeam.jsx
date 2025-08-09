@@ -38,30 +38,30 @@ const OurTeam = () => {
 
   const team = [
     {
-      name: "Priya Sharma",
-      role: "Founder & CEO",
-      bio: "Passionate environmental advocate with 10+ years in sustainable business development.",
+      name: "Subrata Mondal",
+      role: "Full Stack Developer",
+      bio: "Full stack developer specializing in web applications and system architecture.",
       image: "/api/placeholder/300/300",
       color: "from-green-400 to-emerald-500"
     },
     {
-      name: "Rajesh Kumar",
-      role: "Head of Operations",
-      bio: "Expert in supply chain management and sustainable sourcing with a focus on quality.",
+      name: "Subhadip Jana",
+      role: "UI/UX Designer & Frontend Developer",
+      bio: "Creative designer and frontend developer focused on building intuitive user experiences.",
       image: "/api/placeholder/300/300", 
       color: "from-purple-400 to-purple-500"
     },
     {
-      name: "Anjali Gupta",
-      role: "Sustainability Director",
-      bio: "Environmental scientist dedicated to advancing eco-friendly practices in business.",
+      name: "Sushovan Paul",
+      role: "Backend Developer",
+      bio: "Backend developer focused on building robust and scalable server-side solutions.",
       image: "/api/placeholder/300/300",
       color: "from-blue-400 to-blue-500"
     },
     {
-      name: "Vikram Singh",
-      role: "Customer Success Manager",
-      bio: "Helping customers make informed decisions for their sustainable journey.",
+      name: "Supratik Roychoudhury",
+      role: "AIML Developer",
+      bio: "AI/ML developer specializing in intelligent systems and data-driven solutions.",
       image: "/api/placeholder/300/300",
       color: "from-orange-400 to-orange-500"
     }

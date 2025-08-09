@@ -281,7 +281,7 @@ const TestimonialSection = () => {
               duration={4000}
               suffix="+"
               className="text-3xl font-semibold text-green-600 tabular-nums"
-              startDelay={500}
+              startDelay={100}
             />
             <span className="text-gray-700 font-medium text-xl">Happy Clients</span>
           </motion.div>

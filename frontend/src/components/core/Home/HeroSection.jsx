@@ -254,7 +254,7 @@ const HeroSection = () => {
 
             <div className="w-[105%] flex justify-between items-end">
               {/* Bottom Icons */}
-              <div className="flex items-center space-x-4 pt-8">
+              <div className="flex items-center space-x-4 pt-8 z-10">
                 <div 
                   ref={(el) => addToIconsRefs(el, 0)}
                   className="w-12 h-12 bg-[#9cfdcc] rounded-full flex items-center justify-center border border-transparent hover:border-[#52d091] transition-all duration-300 transform-gpu cursor-pointer"

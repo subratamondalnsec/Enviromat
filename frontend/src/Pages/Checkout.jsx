@@ -17,7 +17,7 @@ const Checkout = ({
   isModal = false,
 }) => {
   // User coins balance (static for now)
-  const userCoins = 300;
+  const userCoins = 480;
 
   // State management - Starting from step 1 (Shipping)
   const [currentStep, setCurrentStep] = useState(1);
