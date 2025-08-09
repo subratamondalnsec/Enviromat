@@ -45,10 +45,7 @@ dist-ssr
 
 # Ignoring the 'services' folder and its contents
 
-src/services/apis.js
-src/services/operations/
-src/services/operations/authAPI.js
-src/services/operations/communityApi.js
+
 src/services/operations/profileAPI.js
 
 # Ignoring the 'slices' folder and its contents
