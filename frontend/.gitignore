@@ -34,10 +34,6 @@ dist-ssr
 
 # Ignoring the 'src' folder and its contents
 
-
-src/components/core/Auth/Tab.jsx
-src/components/core/Blog/
-src/components/core/Checkout/
 src/components/core/Checkout/CartItems.jsx
 src/components/core/Checkout/CheckoutHeader.jsx
 src/components/core/Checkout/CoinPaymentOption.jsx
