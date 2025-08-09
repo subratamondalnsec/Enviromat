@@ -33,9 +33,7 @@ dist-ssr
 
 
 # Ignoring the 'src' folder and its contents
-src/
-src/App.jsx
-src/index.css
+
 src/main.jsx
 src/components/
 src/components/common/
