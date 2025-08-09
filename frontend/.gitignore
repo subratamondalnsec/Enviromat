@@ -43,9 +43,7 @@ dist-ssr
 
 
 
-src/Pages/UpdatePassword.jsx
-src/Pages/UserProfile_NEW.jsx
-src/Pages/UserProfile.jsx
+
 src/Pages/VerifyEmail.jsx
 
 # Ignoring the 'reducer' folder and its contents
