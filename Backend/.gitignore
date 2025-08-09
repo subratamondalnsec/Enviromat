@@ -147,10 +147,7 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/routes/
-src/routes/blogRoute.js
-src/routes/orderRoute.js
-src/routes/pickerRoute.js
+
 src/routes/user.js
 src/routes/wasteRoute.js
 src/utils/
