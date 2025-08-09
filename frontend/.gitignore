@@ -35,9 +35,6 @@ dist-ssr
 # Ignoring the 'src' folder and its contents
 
 
-src/components/core/Auth/OpenRoute.jsx
-src/components/core/Auth/PrivateRoute.jsx
-src/components/core/Auth/SignupForm.jsx
 src/components/core/Auth/Tab.jsx
 src/components/core/Blog/
 src/components/core/Checkout/
