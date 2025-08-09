@@ -39,8 +39,7 @@ dist-ssr
 
 
 
-src/components/common/NavbarComponents/UserDropdown.jsx
-src/components/common/NavbarComponents/UserDropdownItem.jsx
+
 src/components/core/
 src/components/core/PickerProfile.jsx
 src/components/core/About/
