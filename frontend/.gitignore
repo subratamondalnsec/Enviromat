@@ -36,8 +36,7 @@ dist-ssr
 
 
 
-src/components/common/NavbarComponents/
-src/components/common/NavbarComponents/AuthenticatedOptions.jsx
+
 src/components/common/NavbarComponents/CoinButton.jsx
 src/components/common/NavbarComponents/CustomNavLink.jsx
 src/components/common/NavbarComponents/Logo.jsx
