@@ -36,8 +36,7 @@ dist-ssr
 
 
 
-src/components/core/Checkout/OrderSummary.jsx
-src/components/core/Checkout/PaymentForm.jsx
+
 src/components/core/Checkout/ProgressSteps.jsx
 src/components/core/Checkout/ShippingForm.jsx
 src/components/core/Checkout/ShippingOption.jsx
