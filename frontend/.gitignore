@@ -44,8 +44,7 @@ dist-ssr
 
 
 # Ignoring the 'services' folder and its contents
-src/services/
-src/services/apiConnector.js
+
 src/services/apis.js
 src/services/operations/
 src/services/operations/authAPI.js
