@@ -36,9 +36,6 @@ dist-ssr
 
 
 
-src/components/core/Service/
-src/components/core/Shop/
-src/components/core/UserProfile/
 
 # Ignoring the 'Pages' folder and its contents
 src/Pages/
