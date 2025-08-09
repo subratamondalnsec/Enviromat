@@ -46,13 +46,7 @@ dist-ssr
 # Ignoring the 'services' folder and its contents
 
 
-src/services/operations/profileAPI.js
 
-# Ignoring the 'slices' folder and its contents
-src/slices/
-src/slices/authSlice.js
-src/slices/communitySlice.js
-src/slices/profileSlice.js
 
 # Ignoring the 'utils' folder and its contents
 src/utils/
