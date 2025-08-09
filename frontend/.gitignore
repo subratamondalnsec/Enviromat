@@ -36,36 +36,6 @@ dist-ssr
 
 
 
-src/components/core/About/AboutHero.jsx
-src/components/core/About/CallToAction.jsx
-src/components/core/About/ChooseUs.jsx
-src/components/core/About/OurMission.jsx
-src/components/core/About/OurServices.jsx
-src/components/core/About/OurTeam.jsx
-src/components/core/Auth/
-src/components/core/Auth/LoginForm.jsx
-src/components/core/Auth/OpenRoute.jsx
-src/components/core/Auth/PrivateRoute.jsx
-src/components/core/Auth/SignupForm.jsx
-src/components/core/Auth/Tab.jsx
-src/components/core/Blog/
-src/components/core/Checkout/
-src/components/core/Checkout/CartItems.jsx
-src/components/core/Checkout/CheckoutHeader.jsx
-src/components/core/Checkout/CoinPaymentOption.jsx
-src/components/core/Checkout/EcoOption.jsx
-src/components/core/Checkout/OrderSummary.jsx
-src/components/core/Checkout/PaymentForm.jsx
-src/components/core/Checkout/ProgressSteps.jsx
-src/components/core/Checkout/ShippingForm.jsx
-src/components/core/Checkout/ShippingOption.jsx
-src/components/core/Community/
-src/components/core/Community/BlogDetailsModal.jsx
-src/components/core/Community/BlogFilters.jsx
-src/components/core/Community/CreatePost.jsx
-src/components/core/Community/EditPostModal.jsx
-src/components/core/Community/PostCard.jsx
-src/components/core/Home/
 src/components/core/Home/AnimatedNumberTicker.jsx
 src/components/core/Home/HeroSection.jsx
 src/components/core/Home/LegacySection.jsx
