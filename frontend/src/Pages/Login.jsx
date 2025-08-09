@@ -3,11 +3,15 @@ import LoginForm from '../components/core/Auth/LoginForm'
 
 const Login = () => {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-green-200 via-emerald-300 to-teal-200 flex items-center justify-center px-4 sm:px-6 lg:px-8'>
+    <div className='min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8'>
+      {/* Background Image */}
+      <div className="w-full h-full absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1664448003365-e1b05ffd509d?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MTUxfHx8ZW58MHx8fHx8" alt="Login Background" className="w-full h-full object-cover" />
+      </div>
       <div className="w-full max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-green-800 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-green-600 mb-4">
             Welcome to Enviromat
           </h1>
         </div>

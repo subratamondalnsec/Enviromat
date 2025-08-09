@@ -7,8 +7,8 @@ export default function Tab({ tabData, field, setField }) {
           onClick={() => setField(tab.type)}
           className={`${
             field === tab.type
-              ? "bg-gradient-to-r from-green-300 to-emerald-400 text-white shadow-md"
-              : "bg-transparent text-green-700 hover:text-green-800 hover:bg-green-50/50"
+              ? "bg-gradient-to-r from-green-300 to-emerald-400 text-gray-700 shadow-md"
+              : "bg-transparent text-gray-700 hover:bg-green-50/50"
           } py-2 px-6 rounded-full transition-all duration-300 ease-in-out font-medium text-xs min-w-[80px] focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50`}
         >
           {tab?.tabName}
