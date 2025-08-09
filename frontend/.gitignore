@@ -40,8 +40,7 @@ dist-ssr
 # Ignoring the 'Pages' folder and its contents
 
 
-src/Pages/ForgotPassword.jsx
-src/Pages/Home.jsx
+
 src/Pages/Login.jsx
 src/Pages/PickupDashboard_NEW.jsx
 src/Pages/PickupDashboard.jsx
