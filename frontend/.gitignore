@@ -30,16 +30,7 @@ dist-ssr
 
 # Ignoring the 'public' folder and its contents
 
-public/Product/recycled-item11.jpg
-public/Product/recycled-item12.jpg
-public/Product/recycled-item2.jpg
-public/Product/recycled-item3.jpg
-public/Product/recycled-item4.jpg
-public/Product/recycled-item5.jpg
-public/Product/recycled-item6.jpg
-public/Product/recycled-item7.jpg
-public/Product/recycled-item8.jpg
-public/Product/recycled-item9.jpg
+
 
 # Ignoring the 'src' folder and its contents
 src/
