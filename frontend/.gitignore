@@ -34,11 +34,8 @@ dist-ssr
 
 # Ignoring the 'src' folder and its contents
 
-src/main.jsx
-src/components/
-src/components/common/
-src/components/common/Footer.jsx
-src/components/common/Navbar.jsx
+
+
 src/components/common/NavbarComponents/
 src/components/common/NavbarComponents/AuthenticatedOptions.jsx
 src/components/common/NavbarComponents/CoinButton.jsx
