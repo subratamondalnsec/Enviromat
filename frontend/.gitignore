@@ -40,10 +40,8 @@ dist-ssr
 
 
 
-src/components/core/
-src/components/core/PickerProfile.jsx
-src/components/core/About/
-src/components/core/About/AboutHero.jsx
+
+
 src/components/core/About/CallToAction.jsx
 src/components/core/About/ChooseUs.jsx
 src/components/core/About/OurMission.jsx
