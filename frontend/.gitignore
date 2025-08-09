@@ -36,13 +36,6 @@ dist-ssr
 
 
 
-src/components/common/NavbarComponents/NavigationLinks.jsx
-src/components/common/NavbarComponents/UnauthenticatedOptions.jsx
-src/components/common/NavbarComponents/UserDropdown.jsx
-src/components/common/NavbarComponents/UserDropdownItem.jsx
-src/components/core/
-src/components/core/PickerProfile.jsx
-src/components/core/About/
 src/components/core/About/AboutHero.jsx
 src/components/core/About/CallToAction.jsx
 src/components/core/About/ChooseUs.jsx
