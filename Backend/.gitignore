@@ -147,10 +147,7 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/middleware/auth.js
-src/models/
-src/models/BlogModel.js
-src/models/OrderModel.js
+
 src/models/OTP.js
 src/models/Picker.js
 src/models/PickupRequestModel.js
