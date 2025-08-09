@@ -36,9 +36,6 @@ dist-ssr
 
 
 
-src/components/core/Home/Marquee.jsx
-src/components/core/Home/ProTeamCard.jsx
-src/components/core/Home/ServicesCard.jsx
 src/components/core/Home/TestimonialSection.jsx
 src/components/core/PickUpDashboard/
 src/components/core/Service/
