@@ -36,14 +36,6 @@ dist-ssr
 
 
 
-
-
-
-
-
-
-src/components/core/About/CallToAction.jsx
-src/components/core/About/ChooseUs.jsx
 src/components/core/About/OurMission.jsx
 src/components/core/About/OurServices.jsx
 src/components/core/About/OurTeam.jsx
