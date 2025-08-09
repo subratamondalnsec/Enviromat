@@ -147,10 +147,6 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/controllers/Auth.js
-src/controllers/BlogController.js
-src/controllers/OrderController.js
-src/controllers/PickerAuth.js
 src/controllers/PickerProfile.js
 src/controllers/PickupConroller.js
 src/controllers/PickupRequestController.js
