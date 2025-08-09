@@ -36,8 +36,6 @@ dist-ssr
 
 
 
-src/components/core/Home/TestimonialSection.jsx
-src/components/core/PickUpDashboard/
 src/components/core/Service/
 src/components/core/Shop/
 src/components/core/UserProfile/
