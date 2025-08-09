@@ -22,35 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# This .gitignore file is configured to ignore all files and folders inside the 'frontend' directory.
-# Each file and folder path is explicitly listed to ensure they are ignored by Git.
-
-# Ignoring all files and folders in the 'frontend' directory
-
-# Ignoring the 'public' folder and its contents
-
-
-
-# Ignoring the 'src' folder and its contents
-
-
-
-
-# Ignoring the 'Pages' folder and its contents
-
-
-
-
-
-# Ignoring the 'services' folder and its contents
-
-
-
-
-# Ignoring the 'utils' folder and its contents
-src/utils/
-/src/utils/constants.jsx
-
-
-
