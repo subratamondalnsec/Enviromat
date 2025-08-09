@@ -147,9 +147,6 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/controllers/PickerProfile.js
-src/controllers/PickupConroller.js
-src/controllers/PickupRequestController.js
 src/controllers/ResetPassword.js
 src/controllers/UserProfile.js
 src/mail/
