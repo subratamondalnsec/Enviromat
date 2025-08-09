@@ -41,9 +41,7 @@ dist-ssr
 
 
 
-src/Pages/Login.jsx
-src/Pages/PickupDashboard_NEW.jsx
-src/Pages/PickupDashboard.jsx
+
 src/Pages/Services.jsx
 src/Pages/Shop.jsx
 src/Pages/SIgnUp.jsx
