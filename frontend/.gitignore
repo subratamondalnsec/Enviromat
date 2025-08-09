@@ -38,11 +38,8 @@ dist-ssr
 
 
 # Ignoring the 'Pages' folder and its contents
-src/Pages/
-src/Pages/About.jsx
-src/Pages/Checkout.jsx
-src/Pages/Community.jsx
-src/Pages/Error.jsx
+
+
 src/Pages/ForgotPassword.jsx
 src/Pages/Home.jsx
 src/Pages/Login.jsx
