@@ -146,11 +146,7 @@ node_modules/
 
 # Ignoring the 'src' folder and its contents
 
-src/index.js
-src/config/
-src/config/cloudinary.js
-src/config/database.js
-src/controllers/
+
 src/controllers/Auth.js
 src/controllers/BlogController.js
 src/controllers/OrderController.js
