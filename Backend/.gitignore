@@ -147,10 +147,6 @@ node_modules/
 # Ignoring the 'src' folder and its contents
 
 
-src/mail/
-src/mail/templates/
-src/mail/templates/adminContactNotification.js
-src/mail/templates/contactFormRes.js
 src/mail/templates/emailVerificationTemplate.js
 src/mail/templates/passwordUpdate.js
 src/middleware/
