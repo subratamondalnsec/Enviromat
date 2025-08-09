@@ -9,13 +9,6 @@ const Login = () => {
         <img src="https://images.unsplash.com/photo-1664448003365-e1b05ffd509d?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MTUxfHx8ZW58MHx8fHx8" alt="Login Background" className="w-full h-full object-cover" />
       </div>
       <div className="w-full max-w-4xl">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-green-600 mb-4">
-            Welcome to Enviromat
-          </h1>
-        </div>
-        
         {/* Login Form */}
         <div className="flex justify-center">
           <LoginForm />
