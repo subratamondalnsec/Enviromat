@@ -54,7 +54,7 @@ exports.updatePickerProfile = async (req, res) => {
         message: "Picker not found",
       });
     }
-
+    console.log("PICKER_TO_UPDATE:", picker);
     // Update picker fields
     if (firstName !== undefined) picker.firstName = firstName;
     if (lastName !== undefined) picker.lastName = lastName;
@@ -74,7 +74,7 @@ exports.updatePickerProfile = async (req, res) => {
           image,
           process.env.FOLDER_NAME,
           1000,
-          1000
+          90
         );
         picker.image = uploadedImage.secure_url;
       } catch (uploadError) {

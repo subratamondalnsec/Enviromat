@@ -68,7 +68,7 @@ exports.updateUserProfile = async (req, res) => {
           image,
           process.env.FOLDER_NAME,
           1000,
-          1000
+          90
         );
         user.image = uploadedImage.secure_url;
       } catch (uploadError) {
