@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 
 import { loginUser } from "../../../slices/authSlice"
-import { ACCOUNT_TYPE } from "../../../utils/constants"
+import { ACCOUNT_TYPE } from "../../../utils/constants.jsx"
 import Tab from "./Tab"
 
 export default function LoginForm() {

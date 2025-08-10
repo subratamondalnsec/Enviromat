@@ -13,8 +13,9 @@ import {
   ArrowLeft 
 } from 'lucide-react';
 
-// Import profile API
+// Import profile API and actions
 import { updatePickerProfile } from '../../../services/operations/profileAPI';
+import { setUser } from '../../../slices/profileSlice';
 
 const EditPickerProfile = ({ profile, onCancel, onSave }) => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const EditPickerProfile = ({ profile, onCancel, onSave }) => {
     isActive: true
   });
 
-  // Initialize form data when profile is available
+  // Initialize form data when profile is available or set defaults
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -61,8 +62,28 @@ const EditPickerProfile = ({ profile, onCancel, onSave }) => {
         serviceAreas: profile.serviceAreas || [],
         isActive: profile.isActive !== undefined ? profile.isActive : true
       });
+    } else if (user) {
+      // If no profile but user exists (new picker), initialize with user data
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        contactNumber: user.contactNumber || '',
+        address: {
+          street: user.address?.street || '',
+          city: user.address?.city || '',
+          state: user.address?.state || '',
+          pinCode: user.address?.pinCode || ''
+        },
+        vehicleDetails: {
+          vehicleType: user.vehicleDetails?.vehicleType || 'Bicycle',
+          vehicleNumber: user.vehicleDetails?.vehicleNumber || ''
+        },
+        serviceAreas: user.serviceAreas || [],
+        isActive: user.isActive !== undefined ? user.isActive : true
+      });
     }
-  }, [profile]);
+  }, [profile, user]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -102,6 +123,12 @@ const EditPickerProfile = ({ profile, onCancel, onSave }) => {
 
     try {
       const updatedProfile = await dispatch(updatePickerProfile(user._id, formData));
+      
+      // Update the user state in Redux and localStorage
+      const updatedUser = { ...user, ...formData };
+      dispatch(setUser(updatedUser));
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
       toast.success('Profile updated successfully');
       onSave(updatedProfile);
     } catch (error) {

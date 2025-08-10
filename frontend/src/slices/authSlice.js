@@ -3,6 +3,8 @@ import { toast } from "react-hot-toast";
 import { apiConnector } from "../services/apiConnector";
 import { endpoints, pickerEndpoints } from "../services/apis";
 import { setUser } from "./profileSlice";
+import { ACCOUNT_TYPE } from "../utils/constants.jsx";
+import { isPickerProfileComplete } from "../utils/profileUtils.js";
 
 const { LOGIN_API, LOGOUT_API } = endpoints;
 
@@ -27,12 +29,13 @@ export const loginUser = createAsyncThunk(
 
       const { token, user } = response.data;
       
-      // Store token in localStorage
-      localStorage.setItem("token", JSON.stringify(token));
-      
       // Set user image if not provided
       const userImage = user.image || `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName} ${user.lastName}`;
       const userWithImage = { ...user, image: userImage };
+      
+      // Store token and user in localStorage
+      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("user", JSON.stringify(userWithImage));
       
       // Dispatch setUser action
       dispatch(setUser(userWithImage));
@@ -40,9 +43,16 @@ export const loginUser = createAsyncThunk(
       toast.dismiss(toastId);
       toast.success("Login successful");
 
-      // Role-based navigation
-      if (user.accountType === "Picker") {
-        navigate("/picker-profile");
+      // Role-based navigation with profile completeness check
+      if (user.accountType === ACCOUNT_TYPE.PICKER) {
+        // For pickers, check if profile is complete
+        if (isPickerProfileComplete(userWithImage)) {
+          navigate("/picker-profile");
+        } else {
+          // Profile is incomplete, redirect to edit profile
+          toast.info("Please complete your profile to access all features");
+          navigate("/picker-edit-profile");
+        }
       } else {
         navigate("/");
       }

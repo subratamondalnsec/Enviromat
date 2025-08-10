@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { motion } from "motion/react"
-import { ACCOUNT_TYPE } from "../../../utils/constants"
+import { ACCOUNT_TYPE } from "../../../utils/constants.jsx"
 import Tab from "./Tab";
 import { sendOtp } from "../../../services/operations/authAPI"
 import { setSignupData } from "../../../slices/authSlice"

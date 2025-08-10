@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-// import OpenRoute from "./components/core/Auth/OpenRoute";
-// import PrivateRoute from "./components/core/Auth/PrivateRoute";
+import OpenRoute from "./components/core/Auth/OpenRoute";
+import PrivateRoute from "./components/core/Auth/PrivateRoute";
+import PickerProtectedRoute from "./components/core/Auth/PickerProtectedRoute";
 import Navbar from './components/common/Navbar';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
@@ -21,6 +22,7 @@ import Shop from './Pages/Shop';
 import UserProfile from './Pages/UserProfile';
 import PickupDashboard from './Pages/PickupDashboard';
 import PickerProfile from './Pages/PickerProfile';
+import EditPickerProfile from './Pages/EditPickerProfile';
 
 function App() {
   const location = useLocation();
@@ -58,7 +60,8 @@ function App() {
                     location.pathname === '/forgot-password' ||
                     location.pathname.startsWith('/update-password/') || 
                     location.pathname === '/pickup-dashboard' ||
-                    location.pathname === '/picker-profile'; 
+                    location.pathname === '/picker-profile' ||
+                    location.pathname === '/picker-edit-profile'; 
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,11 +72,27 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<SignUp />} />
+        <Route path="login" element={
+          <OpenRoute>
+            <Login />
+          </OpenRoute>
+        } />
+        <Route path="signup" element={
+          <OpenRoute>
+            <SignUp />
+          </OpenRoute>
+        } />
         <Route path="update-password/:id" element={<UpdatePassword />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="verify-email" element={
+          <OpenRoute>
+            <VerifyEmail />
+          </OpenRoute>
+        } />
+        <Route path="forgot-password" element={
+          <OpenRoute>
+            <ForgotPassword />
+          </OpenRoute>
+        } />
         <Route path="about" element={<About />} />
         <Route path="community" element={<Community />} />
         <Route path="services" element={<Services />} />
@@ -81,8 +100,21 @@ function App() {
         {/* User routes */}
         <Route path="user-profile" element={<UserProfile />} />
         {/* Picker routes */}
-        <Route path="pickup-dashboard" element={<PickupDashboard />} />
-        <Route path="picker-profile" element={<PickerProfile />} />
+        <Route path="picker-edit-profile" element={
+          <PrivateRoute>
+            <EditPickerProfile />
+          </PrivateRoute>
+        } />
+        <Route path="pickup-dashboard" element={
+          <PickerProtectedRoute>
+            <PickupDashboard />
+          </PickerProtectedRoute>
+        } />
+        <Route path="picker-profile" element={
+          <PickerProtectedRoute>
+            <PickerProfile />
+          </PickerProtectedRoute>
+        } />
 
         {/* Catch-all route for 404 errors */}
         <Route path="*" element={<Error />} />

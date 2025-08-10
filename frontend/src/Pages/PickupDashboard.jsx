@@ -95,8 +95,20 @@ const PickupDashboard = () => {
     const fetchProfile = async () => {
       if (user && user.accountType === 'Picker') {
         try {
-          const profileData = await dispatch(getPickerProfile(user._id));
-          setProfile(profileData);
+          // Comment out API call temporarily to avoid infinite loading
+          // const profileData = await dispatch(getPickerProfile(user._id));
+          // setProfile(profileData);
+          
+          // Use user data directly for now
+          setProfile({
+            name: `${user.firstName} ${user.lastName}`,
+            pic: user.image,
+            email: user.email,
+            phone: user.contactNumber || '',
+            location: user.address ? `${user.address.city}, ${user.address.state}` : '',
+            travelMode: user.vehicleDetails?.vehicleType?.toLowerCase() || 'bike',
+            password: ""
+          });
         } catch (error) {
           console.error('Failed to fetch picker profile:', error);
           // Use user data as fallback
@@ -110,11 +122,22 @@ const PickupDashboard = () => {
             password: ""
           });
         }
+      } else {
+        // Set default profile for demo purposes
+        setProfile({
+          name: "Demo Picker",
+          pic: "",
+          email: "picker@demo.com",
+          phone: "+91 9800112233",
+          location: "Kolkata, WB",
+          travelMode: "bike",
+          password: ""
+        });
       }
     };
 
     fetchProfile();
-  }, [user, dispatch]);
+  }, [user]); // Remove dispatch from dependencies to avoid infinite loop
 
   // Handle profile edit
   const handleEditProfile = () => {
