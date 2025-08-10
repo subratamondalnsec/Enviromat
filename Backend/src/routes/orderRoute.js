@@ -26,6 +26,7 @@ router.post('/cancel-order',cancelRequestOfOrder)
 // Cancel from add to card
 router.post('/cancel-from-addtocard',cancelFromAddToCard)
 
+// get all items listed items to show in shop
 router.get("/get-items",getAllItems);
 
 // create all order at a time

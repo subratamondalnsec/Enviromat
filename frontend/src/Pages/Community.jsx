@@ -12,6 +12,7 @@ import EditPostModal from "../components/core/Community/EditPostModal";
 import { getAllBlogs, toggleLikeBlog, addCommentToBlog } from "../services/operations/communityApi";
 import { setLoading, setBlogs, removeBlog } from "../slices/communitySlice";
 
+
 const CommunityPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
