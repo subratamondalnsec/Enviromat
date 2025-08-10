@@ -2,81 +2,7 @@ const picker=require("../models/Picker")
 const { auth } = require("../middleware/auth");
 const Order = require("../models/OrderModel");
 const PickupRequest = require("../models/PickupRequestModel");
-
-
-
-// 1. Add to runner's bag (order or pickup)
-exports.addOrderOrPickupToBag = async (req, res) => {
-  const { type, itemId } = req.body; // type: 'order' or 'pickup'
-  const runnerId = req.user.id;
-
-  // Input validation
-  if (!type || !itemId) {
-    return res.status(400).json({ error: "Type and itemId are required" });
-  }
-
-  if (!['order', 'pickup'].includes(type)) {
-    return res.status(400).json({ error: "Invalid type. Must be 'order' or 'pickup'" });
-  }
-
-  try {
-    const runner = await picker.findById(runnerId);
-    if (!runner) return res.status(404).json({ error: "Picker not found" });
-
-    if (type === "order") {
-      const order = await Order.findById(itemId);
-      if (!order) return res.status(404).json({ error: "Order not found" });
-      
-      if (order.deliveryStatus !== "processing") {
-        return res.status(400).json({ error: "Order is not available for assignment" });
-      }
-
-      // Check if already assigned to this picker
-      if (runner.assignedDeliveries.includes(itemId)) {
-        return res.status(400).json({ error: "Order already in your bag" });
-      }
-
-      order.deliveryStatus = "assigned";
-      order.deliveredBy = runnerId;
-      await order.save();
-
-      runner.assignedDeliveries.push(itemId);
-    } else if (type === "pickup") {
-      const pickup = await PickupRequest.findById(itemId);
-      if (!pickup) return res.status(404).json({ error: "Pickup not found" });
-
-      if (pickup.pickupStatus !== "processing") {
-        return res.status(400).json({ error: "Pickup is not available for assignment" });
-      }
-
-      // Check if already assigned to this picker
-      if (runner.assignedPickups.includes(itemId)) {
-        return res.status(400).json({ error: "Pickup already in your bag" });
-      }
-
-      pickup.pickupStatus = "assigned";
-      pickup.pickupBy = runnerId;
-      await pickup.save();
-
-      runner.assignedPickups.push(itemId);
-    }
-
-    await runner.save();
-    res.status(200).json({ 
-      success: true,
-      message: `${type} added to runner's bag.`,
-      data: {
-        type,
-        itemId,
-        creditPoints: runner.creditPoints
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
+const Picker = require("../models/Picker");
 
 // 2. Remove from runner's bag
 exports.removeOrderOrPickupFromBag = async (req, res) => {
@@ -273,6 +199,7 @@ exports.getPickerAssignments = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // 6. Get pickup request details
 exports.getPickupDetails = async (req, res) => {
