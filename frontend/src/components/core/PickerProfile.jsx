@@ -183,16 +183,18 @@ const PickerProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#F0FDF4] py-8">
       <div className="max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-white rounded-lg shadow-lg"
+          className="bg-neutral-200 rounded-3xl shadow-lg border border-[#57ce7f]"
+
+
         >
           {/* Header */}
-          <div className="bg-green-600 text-white p-6 rounded-t-lg">
+          <div className="bg-green-600 text-white p-6 rounded-t-3xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
@@ -217,7 +219,8 @@ const PickerProfile = () => {
                 </div>
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="ml-4 px-4 py-2 bg-white text-green-600 rounded hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                  className="ml-4 px-4 py-2 bg-[#D1FADF] text-gray-600 rounded-xl transition-colors flex items-center space-x-2"
+
                 >
                   {isEditing ? <X className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
                   <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
