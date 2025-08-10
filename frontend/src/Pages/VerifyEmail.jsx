@@ -40,8 +40,7 @@ function VerifyEmail() {
         password,
         confirmPassword,
         otp,
-        navigate,
-        accountType === "Picker" ? {} : {}
+        navigate
       )
     );
   };

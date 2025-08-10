@@ -73,25 +73,17 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="login" element={
-          <OpenRoute>
             <Login />
-          </OpenRoute>
         } />
         <Route path="signup" element={
-          <OpenRoute>
             <SignUp />
-          </OpenRoute>
         } />
         <Route path="update-password/:id" element={<UpdatePassword />} />
         <Route path="verify-email" element={
-          <OpenRoute>
             <VerifyEmail />
-          </OpenRoute>
         } />
         <Route path="forgot-password" element={
-          <OpenRoute>
             <ForgotPassword />
-          </OpenRoute>
         } />
         <Route path="about" element={<About />} />
         <Route path="community" element={<Community />} />

@@ -14,7 +14,7 @@ const mailSender = async (email, title, body) => {
     })
 
     let info = await transporter.sendMail({
-      from: `"Studynotion | CodeHelp" <${process.env.MAIL_USER}>`, // sender address
+      from: `"ENVIROMAT" <${process.env.MAIL_USER}>`, // sender address
       to: `${email}`, // list of receivers
       subject: `${title}`, // Subject line
       html: `${body}`, // html body

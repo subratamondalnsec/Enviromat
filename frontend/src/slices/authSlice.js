@@ -42,11 +42,13 @@ export const loginUser = createAsyncThunk(
       
       toast.dismiss(toastId);
       toast.success("Login successful");
-
+      console.log(user.accountType);
+      
       // Role-based navigation with profile completeness check
       if (user.accountType === ACCOUNT_TYPE.PICKER) {
         // For pickers, check if profile is complete
         if (isPickerProfileComplete(userWithImage)) {
+          console.log("Picker profile is complete");
           navigate("/picker-profile");
         } else {
           // Profile is incomplete, redirect to edit profile
