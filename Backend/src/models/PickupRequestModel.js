@@ -40,9 +40,27 @@ const PickupRequestSchema = new mongoose.Schema({
             required: true
         }
     },
-    address:{
+    address: {
+      street: {
         type: String,
-        required: true
+        trim: true,
+        default: "",
+      },
+      city: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      state: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      pinCode: {
+        type: String,
+        trim: true,
+        default: "",
+      },
     },
     pickupBy: {
         type: mongoose.Schema.Types.ObjectId,
