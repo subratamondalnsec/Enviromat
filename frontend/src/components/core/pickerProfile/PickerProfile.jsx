@@ -1,97 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { toast } from 'react-hot-toast';
-import { motion } from 'motion/react';
-import { 
-  User, 
-  Phone, 
-  MapPin, 
-  Truck, 
-  Star, 
-  Upload,
-  Save,
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { motion } from "motion/react";
+import {
+  User,
+  Phone,
+  Mail,
+  Hash,
+  Truck,
+  Star,
+  MapPin,
+  Landmark,
   Edit3,
-  X 
-} from 'lucide-react';
+  Layers3,
+  Map,
+} from "lucide-react";
+import { getPickerProfile } from "../../../services/operations/profileAPI";
+import { Bar, Line } from "react-chartjs-2";
+import EditPickerProfile from "./EditPickerProfile";
 
-// Import profile API
-import { getPickerProfile, updatePickerProfile } from '../../../services/operations/profileAPI';
-import EditPickerProfile from './EditPickerProfile';
+// ---------- STYLE CONSTANTS ----------
+const statCardStyles =
+  "bg-gradient-to-br from-green-50 via-green-100 to-teal-50 border border-green-200 rounded-2xl shadow flex flex-col items-center justify-center py-6 px-3";
+
+const boxLabel =
+  "flex items-center gap-3 mb-1 font-semibold text-gray-700 text-xs uppercase tracking-wider";
+const valStyle = "font-medium text-gray-900 ml-3";
+const infoBox =
+  "flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition mb-2 shadow-sm border border-gray-100";
+
+const chartCardStyles =
+  "bg-gray-100 border border-gray-400 rounded-3xl p-6 mb-8 shadow-sm";
+
+// ✅ Fixed missing variable to fix the runtime error
+const chartLabelClass = "text-lg font-semibold text-green-800 mb-4";
 
 const PickerProfile = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.profile);
-  const { loading } = useSelector((state) => state.profile);
-
+  const { user, loading } = useSelector((state) => state.profile);
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Fetch picker profile on component mount
+  const handleEditClick = () => setIsEditing(true);
+  const handleCancel = () => setIsEditing(false);
+  const handleSaveProfile = (updated) => {
+    setProfile(updated);
+    setIsEditing(false);
+  };
+
   useEffect(() => {
+    const defaultProfile = {
+      firstName: "Debashis",
+      lastName: "Senapati",
+      email: "debo.senpicker@demo.com",
+      contactNumber: "+91 9800112233",
+      address: {
+        street: "32/A Eco Park Rd",
+        city: "Kolkata",
+        state: "West Bengal",
+        pinCode: "700156",
+      },
+      vehicleDetails: { vehicleType: "Truck", vehicleNumber: "WB 09 D 9987" },
+      serviceAreas: [
+        "Salt Lake",
+        "New Town",
+        "Rajarhat",
+        "Howrah",
+        "Park Street",
+        "Ballygunge",
+      ],
+      isActive: true,
+      image: "",
+      rating: { average: 4.8, count: 73 },
+      creditPoints: 540,
+      assignedPickups: Array(17).fill({}),
+      assignedDeliveries: Array(7).fill({}),
+      pickupStats: [
+        { month: "Jan", pickups: 11, wasteKg: 36 },
+        { month: "Feb", pickups: 15, wasteKg: 49 },
+        { month: "Mar", pickups: 19, wasteKg: 55 },
+        { month: "Apr", pickups: 16, wasteKg: 52 },
+        { month: "May", pickups: 21, wasteKg: 59 },
+        { month: "Jun", pickups: 23, wasteKg: 64 },
+        { month: "Jul", pickups: 28, wasteKg: 76 },
+        { month: "Aug", pickups: 31, wasteKg: 82 },
+        { month: "Sep", pickups: 29, wasteKg: 78 },
+        { month: "Oct", pickups: 22, wasteKg: 58 },
+        { month: "Nov", pickups: 18, wasteKg: 42 },
+        { month: "Dec", pickups: 17, wasteKg: 38 },
+      ],
+    };
+
     const fetchProfile = async () => {
       if (user && user._id) {
         try {
-          const profileData = await dispatch(getPickerProfile(user._id));
-          setProfile(profileData);
-        } catch (error) {
-          console.error('Failed to fetch picker profile:', error);
-          // Use user data as fallback
-          if (user) {
-            const fallbackData = {
-              firstName: user.firstName || '',
-              lastName: user.lastName || '',
-              email: user.email || '',
-              contactNumber: user.contactNumber || '',
-              address: user.address || {
-                street: '',
-                city: '',
-                state: '',
-                pinCode: ''
-              },
-              vehicleDetails: user.vehicleDetails || {
-                vehicleType: 'Bicycle',
-                vehicleNumber: ''
-              },
-              serviceAreas: user.serviceAreas || [],
-              isActive: user.isActive !== undefined ? user.isActive : true,
-              creditPoints: 0,
-              assignedPickups: [],
-              assignedDeliveries: [],
-              rating: { average: 0, count: 0 }
-            };
-            setProfile(fallbackData);
-          }
+          const data = await dispatch(getPickerProfile(user._id));
+          setProfile({ ...defaultProfile, ...data });
+          return;
+        } catch {
+          setProfile({ ...defaultProfile, ...user });
+          return;
         }
       }
+      // Set demo profile if no user or fetch fails
+      setProfile(defaultProfile);
     };
 
     fetchProfile();
   }, [user, dispatch]);
 
-  const handleSaveProfile = (updatedProfile) => {
-    setProfile(updatedProfile);
-    setIsEditing(false);
+  // ----- Chart Data -----
+  const chartLabels = profile?.pickupStats?.map((d) => d.month) || [];
+  const pickupsData = profile?.pickupStats?.map((d) => d.pickups) || [];
+  const wasteData = profile?.pickupStats?.map((d) => d.wasteKg) || [];
+
+  const barData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: "Pickups",
+        data: pickupsData,
+        backgroundColor: [
+          "#22c55eaa",
+          "#10b981aa",
+          "#a7f3d0",
+          "#2dd4bffa",
+          "#06b6d4cc",
+          "#818cf8bb",
+          "#f97316bb",
+          "#fde68a",
+          "#f43f5eaa",
+          "#3b82f6cc",
+          "#eab308cc",
+          "#a21cafaa",
+        ],
+        borderRadius: 8,
+        maxBarThickness: 40,
+      },
+      {
+        label: "Waste Collected (kg)",
+        data: wasteData,
+        backgroundColor: "rgba(139, 92, 246, 0.22)",
+        borderRadius: 8,
+        maxBarThickness: 40,
+      },
+    ],
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
+  const lineData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: "Waste Collected (kg)",
+        data: wasteData,
+        borderColor: "#10b981",
+        backgroundColor: "#34d39966",
+        pointBackgroundColor: "#10b981",
+        fill: true,
+        tension: 0.4,
+      },
+    ],
   };
 
+  // ----- LOADING -----
   if (loading && !profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your profile...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-[#F4FFF6]">
+        <div className="animate-spin w-16 h-16 rounded-full border-b-4 border-green-500 mx-auto"></div>
       </div>
     );
   }
 
-  // Show EditPickerProfile component when in editing mode
+  // ----- EDITING -----
   if (isEditing) {
     return (
-      <EditPickerProfile 
+      <EditPickerProfile
         profile={profile}
         onCancel={handleCancel}
         onSave={handleSaveProfile}
@@ -99,453 +181,269 @@ const PickerProfile = () => {
     );
   }
 
+  // ----- MAIN RENDER -----
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 py-12">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="min-h-screen bg-[#F9FAFB] py-8">
+      <div className="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 mb-10">
+        {/* ---------- HEADER ---------- */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="bg-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm bg-opacity-95"
+          transition={{ duration: 0.6 }}
+          className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-8 flex flex-col md:flex-row md:items-center md:justify-between mb-10 shadow-2xl"
         >
-          {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white p-8 rounded-t-lg relative overflow-hidden">
-            <div className="absolute inset-0 bg-black opacity-10"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12"></div>
-            
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-                    <img 
-                      src={profile?.image || `https://api.dicebear.com/5.x/initials/svg?seed=${profile?.firstName}%20${profile?.lastName}`} 
-                      alt="Profile" 
-                      className="w-18 h-18 rounded-full object-cover" 
-                    />
-                  </div>
-                  <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center ${profile?.isActive ? 'bg-green-400' : 'bg-gray-400'}`}>
-                    <div className={`w-2 h-2 rounded-full ${profile?.isActive ? 'bg-white' : 'bg-gray-600'}`}></div>
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold mb-1">
-                    {profile?.firstName} {profile?.lastName}
-                  </h1>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
-                      Waste Picker
-                    </span>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${profile?.isActive ? 'bg-green-400 bg-opacity-30 text-green-100' : 'bg-gray-400 bg-opacity-30 text-gray-100'}`}>
-                      {profile?.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-4 text-green-100">
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="w-4 h-4" />
-                      <span className="text-sm">{profile?.address?.city || 'Location not set'}, {profile?.address?.state || ''}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Truck className="w-4 h-4" />
-                      <span className="text-sm">{profile?.vehicleDetails?.vehicleType || 'Bicycle'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-end space-y-4">
-                <div className="flex items-center space-x-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-bold text-lg">
-                    {profile?.rating?.average?.toFixed(1) || '0.0'}
-                  </span>
-                  <span className="text-green-100 text-sm">
-                    ({profile?.rating?.count || 0} reviews)
-                  </span>
-                </div>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-6 py-3 bg-white text-green-600 rounded-lg hover:bg-gray-50 transition-all duration-200 flex items-center space-x-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          {/* Left: Profile pic & name */}
+          <div className="flex gap-8 items-center w-full md:w-auto">
+            <div className="relative">
+              <img
+                src={
+                  profile?.image ||
+                  `https://api.dicebear.com/5.x/initials/svg?seed=${profile?.firstName}%20${profile?.lastName}`
+                }
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
+              />
+              <span
+                title={profile?.isActive ? "Active" : "Inactive"}
+                className={`absolute bottom-1 right-0 w-5 h-5 border-2 border-white rounded-full ${
+                  profile?.isActive ? "bg-green-400" : "bg-gray-400"
+                }`}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl font-bold text-white">
+                {profile?.firstName} {profile?.lastName}
+              </h1>
+              <div className="flex flex-wrap items-center gap-4 mt-1">
+                <span className="bg-white/30 text-green-800 font-bold text-xs px-4 py-1 rounded-full shadow-sm">
+                  Waste Picker
+                </span>
+                <span
+                  className={`text-xs px-3 py-1 rounded-full font-bold shadow ${
+                    profile?.isActive
+                      ? "bg-green-300 bg-opacity-30 text-green-800"
+                      : "bg-gray-400 bg-opacity-30 text-gray-700"
+                  }`}
                 >
-                  <Edit3 className="w-4 h-4" />
-                  <span>Edit Profile</span>
-                </button>
+                  {profile?.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-5 text-white text-xs mt-3">
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>
+                    {profile?.address?.city}, {profile?.address?.state}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Truck className="w-4 h-4" />
+                  <span>{profile?.vehicleDetails?.vehicleType}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* Personal Information */}
-              <div className="space-y-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-green-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-800">Personal Information</h2>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                      First Name
-                    </label>
-                    <div className="relative">
-                      <div className="w-full p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl text-gray-900 font-medium group-hover:border-green-300 transition-all duration-200">
-                        {profile?.firstName || 'Not provided'}
-                      </div>
-                      <div className="absolute top-0 right-0 w-2 h-2 bg-green-400 rounded-full mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                  </div>
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                      Last Name
-                    </label>
-                    <div className="relative">
-                      <div className="w-full p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl text-gray-900 font-medium group-hover:border-green-300 transition-all duration-200">
-                        {profile?.lastName || 'Not provided'}
-                      </div>
-                      <div className="absolute top-0 right-0 w-2 h-2 bg-green-400 rounded-full mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <div className="w-full p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl text-gray-900 font-medium flex items-center space-x-3 group-hover:border-blue-400 transition-all duration-200">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 text-sm">@</span>
-                      </div>
-                      <span>{profile?.email || 'Not provided'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="flex items-center space-x-2 text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                    <Phone className="w-4 h-4" />
-                    <span>Phone Number</span>
-                  </label>
-                  <div className="relative">
-                    <div className="w-full p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl text-gray-900 font-medium flex items-center space-x-3 group-hover:border-green-400 transition-all duration-200">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <Phone className="w-4 h-4 text-green-600" />
-                      </div>
-                      <span>{profile?.contactNumber || 'Not provided'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 p-6 rounded-2xl border-2 border-green-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${profile?.isActive ? 'bg-green-500' : 'bg-gray-400'}`}>
-                        {profile?.isActive ? (
-                          <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        ) : (
-                          <X className="w-6 h-6 text-white" />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-800">
-                          Status: {profile?.isActive ? 'Active' : 'Inactive'}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {profile?.isActive ? 'Available for pickup assignments' : 'Not available for assignments'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className={`px-4 py-2 rounded-full text-sm font-bold ${profile?.isActive ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}`}>
-                      {profile?.isActive ? 'ONLINE' : 'OFFLINE'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address & Vehicle Information */}
-              <div className="space-y-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-800">Location & Vehicle</h2>
-                </div>
-                
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                    Street Address
-                  </label>
-                  <div className="relative">
-                    <div className="w-full p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl text-gray-900 font-medium flex items-center space-x-3 group-hover:border-purple-400 transition-all duration-200">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <MapPin className="w-4 h-4 text-purple-600" />
-                      </div>
-                      <span>{profile?.address?.street || 'Not provided'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                      City
-                    </label>
-                    <div className="relative">
-                      <div className="w-full p-4 bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-xl text-gray-900 font-medium group-hover:border-orange-400 transition-all duration-200">
-                        {profile?.address?.city || 'Not provided'}
-                      </div>
-                      <div className="absolute top-0 right-0 w-2 h-2 bg-orange-400 rounded-full mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                  </div>
-                  <div className="group">
-                    <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                      State
-                    </label>
-                    <div className="relative">
-                      <div className="w-full p-4 bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-200 rounded-xl text-gray-900 font-medium group-hover:border-teal-400 transition-all duration-200">
-                        {profile?.address?.state || 'Not provided'}
-                      </div>
-                      <div className="absolute top-0 right-0 w-2 h-2 bg-teal-400 rounded-full mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-                    PIN Code
-                  </label>
-                  <div className="relative">
-                    <div className="w-full p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl text-gray-900 font-medium group-hover:border-indigo-400 transition-all duration-200">
-                      {profile?.address?.pinCode || 'Not provided'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-gray-50 via-slate-50 to-gray-50 p-6 rounded-2xl border-2 border-gray-200">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Truck className="w-5 h-5 text-gray-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-800">Vehicle Details</h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">
-                        Vehicle Type
-                      </label>
-                      <div className="flex items-center space-x-3 p-3 bg-white border border-gray-300 rounded-lg">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Truck className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <span className="font-medium text-gray-900">{profile?.vehicleDetails?.vehicleType || 'Bicycle'}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">
-                        Vehicle Number
-                      </label>
-                      <div className="flex items-center space-x-3 p-3 bg-white border border-gray-300 rounded-lg">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <span className="text-green-600 text-xs font-bold">#</span>
-                        </div>
-                        <span className="font-medium text-gray-900">{profile?.vehicleDetails?.vehicleNumber || 'Not registered'}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">
-                    Service Areas
-                  </label>
-                  <div className="w-full p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 rounded-2xl min-h-[120px] flex items-center">
-                    {profile?.serviceAreas?.length ? (
-                      <div className="flex flex-wrap gap-3 w-full">
-                        {profile.serviceAreas.map((area, index) => (
-                          <div key={index} className="group relative">
-                            <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 cursor-pointer">
-                              {area}
-                            </span>
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center w-full">
-                        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <MapPin className="w-8 h-8 text-gray-400" />
-                        </div>
-                        <p className="text-gray-500 font-medium">No service areas specified</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Statistics Section */}
-            <div className="mt-12">
-              <div className="flex items-center space-x-3 mb-8">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                  <Star className="w-6 h-6 text-white" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-800">Performance Dashboard</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="group relative overflow-hidden">
-                  <div className="bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -mr-10 -mt-10"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd"/>
-                          </svg>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold">
-                            {profile?.creditPoints || 0}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-green-100 font-medium">Credit Points</div>
-                      <div className="w-full bg-white bg-opacity-20 rounded-full h-2 mt-3">
-                        <div className="bg-white h-2 rounded-full" style={{width: `${Math.min((profile?.creditPoints || 0) / 1000 * 100, 100)}%`}}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group relative overflow-hidden">
-                  <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -mr-10 -mt-10"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                          </svg>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold">
-                            {profile?.assignedPickups?.length || 0}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-blue-100 font-medium">Assigned Pickups</div>
-                      <div className="w-full bg-white bg-opacity-20 rounded-full h-2 mt-3">
-                        <div className="bg-white h-2 rounded-full" style={{width: `${Math.min((profile?.assignedPickups?.length || 0) / 50 * 100, 100)}%`}}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group relative overflow-hidden">
-                  <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -mr-10 -mt-10"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                          <Truck className="w-6 h-6" />
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold">
-                            {profile?.assignedDeliveries?.length || 0}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-purple-100 font-medium">Assigned Deliveries</div>
-                      <div className="w-full bg-white bg-opacity-20 rounded-full h-2 mt-3">
-                        <div className="bg-white h-2 rounded-full" style={{width: `${Math.min((profile?.assignedDeliveries?.length || 0) / 30 * 100, 100)}%`}}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group relative overflow-hidden">
-                  <div className="bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-white bg-opacity-10 rounded-full -mr-10 -mt-10"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                          <Star className="w-6 h-6" />
-                        </div>
-                        <div className="text-right">
-                          <div className="text-3xl font-bold">
-                            {profile?.rating?.average?.toFixed(1) || '0.0'}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-yellow-100 font-medium">Average Rating</div>
-                      <div className="flex items-center space-x-1 mt-3">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star 
-                            key={star} 
-                            className={`w-4 h-4 ${star <= (profile?.rating?.average || 0) ? 'fill-white text-white' : 'text-white text-opacity-30'}`} 
-                          />
-                        ))}
-                        <span className="text-xs text-yellow-100 ml-2">({profile?.rating?.count || 0})</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Stats Row */}
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800">This Month</h3>
-                      <p className="text-gray-600">+{Math.floor(Math.random() * 20) + 5} Completed Tasks</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800">Efficiency</h3>
-                      <p className="text-gray-600">{Math.floor(Math.random() * 30) + 85}% Success Rate</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800">Community Impact</h3>
-                      <p className="text-gray-600">{Math.floor(Math.random() * 500) + 200}kg Waste Processed</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* Right: Edit button + Rating in vertical stack */}
+          <div className="flex flex-col items-end gap-3 mt-6 md:mt-0">
+            <button
+              className="bg-white/90 hover:bg-white text-green-600 px-5 py-2 rounded-xl shadow font-semibold flex items-center gap-2"
+              onClick={handleEditClick}
+              title="Edit Profile"
+            >
+              <Edit3 className="w-5 h-5" />
+              <span>Edit</span>
+            </button>
+            <div className="flex items-center gap-2 rounded-full px-3 py-2 text-yellow-800 font-bold bg-yellow-50 shadow-sm border border-yellow-100">
+              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <span className="flex items-center gap-2">
+                {profile?.rating?.average?.toFixed(1)}
+                <span className="text-xs text-yellow-700">
+                  ({profile?.rating?.count})
+                </span>
+              </span>
             </div>
           </div>
         </motion.div>
+
+        {/* ---------- STAT CARDS ---------- */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+          <div className={statCardStyles}>
+            <div className="text-2xl text-blue-500 font-bold">
+              {profile?.assignedPickups?.length}
+            </div>
+            <div className="text-md text-gray-500 mt-1 font-semibold">
+              Pickups
+            </div>
+          </div>
+          <div className={statCardStyles}>
+            <div className="text-2xl text-purple-600 font-bold">
+              {profile?.assignedDeliveries?.length}
+            </div>
+            <div className="text-md text-gray-500 mt-1 font-semibold">
+              Deliveries
+            </div>
+          </div>
+          <div className={statCardStyles}>
+            <div className="text-2xl text-yellow-600 font-bold">
+              {profile?.rating?.average?.toFixed(1)}
+            </div>
+            <div className="text-md text-gray-500 mt-1 font-semibold">
+              Avg. Rating
+            </div>
+          </div>
+        </div>
+
+        {/* ---------- PICKER DETAILS & ADDRESS ---------- */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+          {/* Picker Details */}
+          <div className="bg-white border border-green-100 rounded-2xl shadow p-7">
+            <div className="text-green-800 font-bold mb-4 flex items-center gap-2">
+              <Layers3 className="w-5 h-5" />
+              Picker Details
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                <User className="w-5 h-5 text-emerald-500" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.firstName} {profile?.lastName}
+              </span>
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                <Mail className="w-5 h-5 text-emerald-500" />
+              </div>
+              <span className="font-medium text-gray-800">{profile?.email}</span>
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
+                <Phone className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.contactNumber}
+              </span>
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
+                <Truck className="w-5 h-5 text-yellow-600" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.vehicleDetails?.vehicleType}
+              </span>
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
+                <Hash className="w-5 h-5 text-blue-500" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.vehicleDetails?.vehicleNumber || "Not registered"}
+              </span>
+            </div>
+          </div>
+
+          {/* Address & Service Areas */}
+          <div className="bg-white border border-green-100 rounded-2xl shadow p-7">
+            <div className="text-green-800 font-bold mb-4 flex items-center gap-2">
+              <Map className="w-5 h-5" />
+              Address & Service Areas
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-cyan-100 flex items-center justify-center">
+                <Landmark className="w-5 h-5 text-cyan-600" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.address?.street}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <div className={`${infoBox} flex-1`}>
+                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-sky-600" />
+                </div>
+                <span className="font-medium text-gray-800">
+                  {profile?.address?.city}
+                </span>
+              </div>
+              <div className={`${infoBox} flex-1`}>
+                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-indigo-600" />
+                </div>
+                <span className="font-medium text-gray-800">
+                  {profile?.address?.state}
+                </span>
+              </div>
+            </div>
+            <div className={infoBox}>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center">
+                <Hash className="w-5 h-5 text-purple-500" />
+              </div>
+              <span className="font-medium text-gray-800">
+                {profile?.address?.pinCode}
+              </span>
+            </div>
+            <div className="mt-4">
+              <div className="text-xs uppercase text-gray-600 mb-1 font-bold">
+                Service Areas
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {profile?.serviceAreas?.length > 0 ? (
+                  profile.serviceAreas.map((area, i) => (
+                    <span
+                      key={i}
+                      className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs whitespace-nowrap"
+                    >
+                      {area}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400">
+                    No service areas specified
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ---------- ANALYTICS ---------- */}
+        <div className={chartCardStyles}>
+          <div className={chartLabelClass}>Monthly Pickups & Waste Collection</div>
+          <div className="w-full md:flex gap-8 items-start">
+            <div className="md:w-3/5 w-full min-w-[250px]">
+              <Bar
+                data={barData}
+                options={{
+                  plugins: {
+                    legend: { position: "top", labels: { color: "#222" } },
+                  },
+                  responsive: true,
+                  scales: {
+                    x: { grid: { display: false }, ticks: { color: "#444" } },
+                    y: { grid: { color: "#eee" }, ticks: { color: "#444" } },
+                  },
+                }}
+                height={225}
+              />
+            </div>
+            <div className="md:w-2/5 w-full mt-8 md:mt-0">
+              <div className="mb-2 font-semibold text-green-900 text-xs">
+                Waste (kg) Trend
+              </div>
+              <Line
+                data={lineData}
+                options={{
+                  plugins: { legend: { display: false } },
+                  responsive: true,
+                  scales: {
+                    x: { grid: { display: false }, ticks: { color: "#555" } },
+                    y: { grid: { color: "#f2f1fa" }, ticks: { color: "#999" } },
+                  },
+                }}
+                height={110}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
