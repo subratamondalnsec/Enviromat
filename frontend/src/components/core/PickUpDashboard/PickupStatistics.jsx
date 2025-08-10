@@ -183,23 +183,23 @@ const PickupStatistics = ({ monthlyData, refSetter }) => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <div className="text-center p-3 bg-green-50 rounded-xl">
+        <div className="text-center p-3 bg-green-100 rounded-xl">
           <div className="text-lg md:text-xl font-bold text-green-600">{totalPickups}</div>
           <div className="text-xs text-gray-600">Total Pickups</div>
         </div>
-        <div className="text-center p-3 bg-purple-50 rounded-xl">
+        <div className="text-center p-3 bg-purple-100 rounded-xl">
           <div className="text-lg md:text-xl font-bold text-purple-600">
             {Math.round(totalPickups / monthlyData.days.length)}
           </div>
           <div className="text-xs text-gray-600">Daily Average</div>
         </div>
-        <div className="text-center p-3 bg-blue-50 rounded-xl">
+        <div className="text-center p-3 bg-blue-100 rounded-xl">
           <div className="text-lg md:text-xl font-bold text-blue-600">
             {Math.max(...monthlyData.pickups)}
           </div>
           <div className="text-xs text-gray-600">Peak Day</div>
         </div>
-        <div className="text-center p-3 bg-orange-50 rounded-xl">
+        <div className="text-center p-3 bg-orange-100 rounded-xl">
           <div className="text-lg md:text-xl font-bold text-orange-600">
             {monthlyData.wasteTypes.reduce((max, current) => Math.max(max, current), 0)}
           </div>

@@ -17,8 +17,8 @@ import { getPickerProfile } from '../services/operations/profileAPI';
 
 const PickupDashboard = () => {
   const pageRef = useRef(null);
-  const leftSectionRef = useRef(null);
-  const rightSectionRef = useRef(null);
+  const scheduledRef = useRef(null);
+  const emergencyRef = useRef(null);
   const statsRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -159,8 +159,8 @@ const PickupDashboard = () => {
 
     const ctx = gsap.context(() => {
       const elements = [
-        leftSectionRef.current,
-        rightSectionRef.current,
+        scheduledRef.current,
+        emergencyRef.current,
         statsRef.current
       ].filter(Boolean);
 
@@ -228,25 +228,29 @@ const PickupDashboard = () => {
         />
       </motion.div>
 
-      {/* Main content */}
-      <div className="flex flex-col lg:flex-row gap-8 p-8">
-        {/* Left section - Pickups */}
-        <div 
-          className="flex-1 space-y-8"
-          ref={leftSectionRef}
-        >
-          <ScheduledPickups pickups={scheduledPickups} />
-          <EmergencyPickups emergencies={emergencyPickups} />
+      <div className="p-8 space-y-8">
+        {/* Top section - Scheduled and Emergency Pickups side by side */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left section - Scheduled Pickups */}
+          <div 
+            className="flex-1"
+            ref={scheduledRef}
+          >
+            <ScheduledPickups pickups={scheduledPickups} />
+          </div>
+
+          {/* Right section - Emergency Pickups */}
+          <div 
+            className="flex-1"
+            ref={emergencyRef}
+          >
+            <EmergencyPickups emergencies={emergencyPickups} />
+          </div>
         </div>
 
-        {/* Right section - Statistics */}
-        <div 
-          className="lg:w-1/3"
-          ref={rightSectionRef}
-        >
-          <div ref={statsRef}>
-            <PickupStatistics monthlyData={monthlyStats} />
-          </div>
+        {/* Bottom section - Statistics (full width) */}
+        <div ref={statsRef}>
+          <PickupStatistics monthlyData={monthlyStats} />
         </div>
       </div>
 

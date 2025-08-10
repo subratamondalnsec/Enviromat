@@ -5,7 +5,7 @@ import { User, Edit3, MapPin } from 'lucide-react';
 
 const DashboardHeader = ({ profile, onEditClick }) => {
   return (
-    <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-4 md:p-6 text-white mb-4 md:mb-6">
+    <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-4 mx-8 md:p-6 mt-6 md:mt-20 text-white mb-4 md:mb-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="bg-white bg-opacity-20 rounded-full p-2">
