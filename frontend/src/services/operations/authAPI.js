@@ -5,6 +5,8 @@ import { setLoading, setToken } from "../../slices/authSlice";
 import { setUser } from "../../slices/profileSlice";
 import { apiConnector } from "../apiConnector";
 import { endpoints, pickerEndpoints } from "../apis";
+import { ACCOUNT_TYPE } from "../../utils/constants.jsx";
+import { isPickerProfileComplete } from "../../utils/profileUtils.js";
 
 const {
   SENDOTP_API,
@@ -99,10 +101,11 @@ export function signUp(
 
       dispatch(setUser({ ...response.data.user, image: userImage }));
       localStorage.setItem("token", JSON.stringify(response.data.token));
+      localStorage.setItem("user", JSON.stringify({ ...response.data.user, image: userImage }));
 
-      if (accountType === "Picker") {
-        // If the account type is Picker, navigate to the picker profile
-        navigate("/picker-profile");
+      if (accountType === ACCOUNT_TYPE.PICKER) {
+        // After picker signup, always redirect to edit profile to complete setup
+        navigate("/picker-edit-profile");
       } else {
         // For regular users, navigate to the home page
         navigate("/");
@@ -157,12 +160,21 @@ export function login(email, password, navigate, token, accountType = "User") {
       const userImage = response.data.user.image
         ? response.data.user.image
         : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
-      dispatch(setUser({ ...response.data.user, image: userImage }));
+      
+      const userWithImage = { ...response.data.user, image: userImage };
+      dispatch(setUser(userWithImage));
       localStorage.setItem("token", JSON.stringify(response.data.token));
+      localStorage.setItem("user", JSON.stringify(userWithImage));
 
-      if (accountType === "Picker") {
-        // If the account type is Picker, navigate to the picker profile
-        navigate("/picker-profile");
+      if (accountType === ACCOUNT_TYPE.PICKER) {
+        // For pickers, check if profile is complete
+        if (isPickerProfileComplete(userWithImage)) {
+          navigate("/picker-profile");
+        } else {
+          // Profile is incomplete, redirect to edit profile
+          toast.info("Please complete your profile to access all features");
+          navigate("/picker-edit-profile");
+        }
       } else {
         // For regular users, navigate to the home page
         navigate("/");

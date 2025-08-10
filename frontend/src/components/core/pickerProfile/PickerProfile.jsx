@@ -49,9 +49,9 @@ const PickerProfile = () => {
 
   useEffect(() => {
     const defaultProfile = {
-      firstName: "Debashis",
-      lastName: "Senapati",
-      email: "debo.senpicker@demo.com",
+      firstName: "Demo",
+      lastName: "Picker",
+      email: "picker@demo.com",
       contactNumber: "+91 9800112233",
       address: {
         street: "32/A Eco Park Rd",
@@ -90,23 +90,31 @@ const PickerProfile = () => {
       ],
     };
 
-    const fetchProfile = async () => {
-      if (user && user._id) {
-        try {
-          const data = await dispatch(getPickerProfile(user._id));
-          setProfile({ ...defaultProfile, ...data });
-          return;
-        } catch {
-          setProfile({ ...defaultProfile, ...user });
-          return;
-        }
-      }
-      // Set demo profile if no user or fetch fails
+    // For now, use user data directly or fallback to default
+    if (user) {
+      setProfile({ ...defaultProfile, ...user });
+    } else {
       setProfile(defaultProfile);
-    };
+    }
 
-    fetchProfile();
-  }, [user, dispatch]);
+    // Comment out API call for now to avoid infinite loading
+    // const fetchProfile = async () => {
+    //   if (user && user._id) {
+    //     try {
+    //       const data = await dispatch(getPickerProfile(user._id));
+    //       setProfile({ ...defaultProfile, ...data });
+    //       return;
+    //     } catch (error) {
+    //       console.error("Failed to fetch picker profile:", error);
+    //       setProfile({ ...defaultProfile, ...user });
+    //       return;
+    //     }
+    //   }
+    //   // Set demo profile if no user or fetch fails
+    //   setProfile(defaultProfile);
+    // };
+    // fetchProfile();
+  }, [user]);
 
   // ----- Chart Data -----
   const chartLabels = profile?.pickupStats?.map((d) => d.month) || [];

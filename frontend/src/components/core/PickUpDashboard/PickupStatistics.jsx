@@ -175,7 +175,7 @@ const PickupStatistics = ({ monthlyData, refSetter }) => {
         {/* Bar Chart */}
         <div>
           <h4 className="text-sm font-semibold text-gray-700 mb-3">Waste Type Distribution</h4>
-          <div className="h-48">
+          <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
             <Bar data={barData} options={options} />
           </div>
         </div>
