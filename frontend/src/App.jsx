@@ -3,6 +3,7 @@ import OpenRoute from "./components/core/Auth/OpenRoute";
 import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import PickerProtectedRoute from "./components/core/Auth/PickerProtectedRoute";
 import Navbar from './components/common/Navbar';
+import PickerNavbar from './components/common/PickerNavbar';
 import Home from './Pages/Home';
 import Login from './Pages/Login';
 import SignUp from './Pages/SIgnUp';
@@ -58,18 +59,23 @@ function App() {
                     location.pathname === '/signup' || 
                     location.pathname === '/verify-email' || 
                     location.pathname === '/forgot-password' ||
-                    location.pathname.startsWith('/update-password/') || 
-                    location.pathname === '/pickup-dashboard' ||
-                    location.pathname === '/picker-profile' ||
-                    location.pathname === '/picker-edit-profile'; 
+                    location.pathname.startsWith('/update-password/'); 
+
+  const showPickerNavbar = location.pathname === '/pickup-dashboard' ||
+                           location.pathname === '/picker-profile' ||
+                           location.pathname === '/picker-edit-profile'; 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {!hideNavbar && (
+      {showPickerNavbar ? (
+        <div className="fixed w-full z-50">
+          <PickerNavbar />
+        </div>
+      ) : !hideNavbar ? (
         <div className="fixed w-full z-50">
           <Navbar />
         </div>
-      )}
+      ) : null}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="login" element={
