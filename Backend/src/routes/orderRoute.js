@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/OrderModel");
 const User = require("../models/User");
-const { createOrder, requestOrder, addToCard,cancelFromAddToCard, cancelRequestOfOrder,createmultiplkeOrder, getAllOrdersByUser, getAllAddToCardsByUser } = require("../controllers/OrderController");
+const { createOrder, requestOrder,getAllItems, addToCard,cancelFromAddToCard, cancelRequestOfOrder,createmultiplkeOrder, getAllOrdersByUser, getAllAddToCardsByUser } = require("../controllers/OrderController");
 
 // Create new order
 router.post("/create",createOrder);
@@ -26,6 +26,7 @@ router.post('/cancel-order',cancelRequestOfOrder)
 // Cancel from add to card
 router.post('/cancel-from-addtocard',cancelFromAddToCard)
 
+router.get("/get-items",getAllItems);
 
 // create all order at a time
 router.post("/create-all-orders",createmultiplkeOrder);

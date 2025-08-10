@@ -13,6 +13,7 @@ export const loginUser = createAsyncThunk(
     const toastId = toast.loading("Logging in...");
     try {
       // Choose the correct API endpoint based on account type
+      console.log("LOGIN API CALLED WITH:", { email, password, accountType });
       const apiEndpoint = accountType === "Picker" ? pickerEndpoints.LOGIN_API : LOGIN_API;
 
       const response = await apiConnector("POST", apiEndpoint, {
@@ -41,7 +42,7 @@ export const loginUser = createAsyncThunk(
 
       // Role-based navigation
       if (user.accountType === "Picker") {
-        navigate("/pickup-dashboard");
+        navigate("/picker-profile");
       } else {
         navigate("/");
       }

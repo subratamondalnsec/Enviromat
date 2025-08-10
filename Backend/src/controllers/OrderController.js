@@ -4,6 +4,16 @@ const User = require("../models/User");
 const {uploadImageToCloudinary}=require("../utils/imageUploader")
 
 
+exports.getAllItems = async (req, res) => {
+  try {
+    const orders = await Order.find({ deliveryStatus: "listed" });
+    res.status(200).json({ success: true, count: orders.length, orders });
+  } catch (error) {
+    console.error("Error fetching all items:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 /**
  * 1️⃣ Seller creates a new item listing
  */

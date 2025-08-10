@@ -100,7 +100,13 @@ export function signUp(
       dispatch(setUser({ ...response.data.user, image: userImage }));
       localStorage.setItem("token", JSON.stringify(response.data.token));
 
-      navigate("/");
+      if (accountType === "Picker") {
+        // If the account type is Picker, navigate to the picker profile
+        navigate("/picker-profile");
+      } else {
+        // For regular users, navigate to the home page
+        navigate("/");
+      }
     } catch (error) {
       console.log("SIGNUP API ERROR............", error);
       console.log("Error details:", error.message);
@@ -153,7 +159,14 @@ export function login(email, password, navigate, token, accountType = "User") {
         : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
       dispatch(setUser({ ...response.data.user, image: userImage }));
       localStorage.setItem("token", JSON.stringify(response.data.token));
-      navigate("/");
+
+      if (accountType === "Picker") {
+        // If the account type is Picker, navigate to the picker profile
+        navigate("/picker-profile");
+      } else {
+        // For regular users, navigate to the home page
+        navigate("/");
+      }
     } catch (error) {
       console.log("LOGIN API ERROR............", error);
       console.log("Login error details:", error.message);

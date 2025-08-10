@@ -20,7 +20,7 @@ import Services from './Pages/Services';
 import Shop from './Pages/Shop';
 import UserProfile from './Pages/UserProfile';
 import PickupDashboard from './Pages/PickupDashboard';
-import PickerProfile from './components/core/PickerProfile';
+import PickerProfile from './Pages/PickerProfile';
 
 function App() {
   const location = useLocation();
@@ -83,7 +83,7 @@ function App() {
         {/* Picker routes */}
         <Route path="pickup-dashboard" element={<PickupDashboard />} />
         <Route path="picker-profile" element={<PickerProfile />} />
-        
+
         {/* Catch-all route for 404 errors */}
         <Route path="*" element={<Error />} />
       </Routes>
