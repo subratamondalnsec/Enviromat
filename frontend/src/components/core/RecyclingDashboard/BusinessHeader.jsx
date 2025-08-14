@@ -1,10 +1,10 @@
 // components/core/RecyclingDashboard/BusinessHeader.jsx
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Building2, TrendingUp, Package, DollarSign } from 'lucide-react';
+import { Building2, TrendingUp, Package, DollarSign, Plus } from 'lucide-react';
 import gsap from 'gsap';
 
-const BusinessHeader = ({ businessInfo }) => {
+const BusinessHeader = ({ businessInfo, onAddProduct }) => {
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -67,26 +67,40 @@ const BusinessHeader = ({ businessInfo }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.05 }}
-              className="bg-neutral-100 bg-opacity-15 rounded-2xl p-4 text-center"
-            >
-              <div className="flex items-center justify-center mb-2">
-                <div className={`text-${stat.color}-500`}>
-                  {stat.icon}
+        <div className="flex flex-col items-end space-y-4">
+          {/* Add Product Button */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onAddProduct}
+            className="bg-white bg-opacity-90 hover:bg-white text-green-600 px-6 py-3 rounded-xl shadow font-semibold flex items-center gap-2 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Product</span>
+          </motion.button>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.02 }}
+                className="bg-white bg-opacity-15 rounded-2xl p-4 text-center"
+              >
+                <div className="flex items-center justify-center mb-2">
+                  <div className={`text-${stat.color}-500`}>
+                    {stat.icon}
+                  </div>
                 </div>
-              </div>
-              <div className="text-2xl font-bold text-purple-400">{stat.value}</div>
-              <div className="text-sm text-gray-500">{stat.label}</div>
-              <div className="flex items-center justify-center mt-1">
-                <TrendingUp className="w-3 h-3 mr-1 text-gray-500" />
-                <span className="text-xs text-gray-500">+{stat.growth}%</span>
-              </div>
-            </motion.div>
-          ))}
+                <div className="text-2xl font-bold text-purple-400">{stat.value}</div>
+                <div className="text-sm text-gray-400">{stat.label}</div>
+                <div className="flex items-center justify-center mt-1 text-gray-500">
+                  <TrendingUp className="w-3 h-3 mr-1 " />
+                  <span className="text-xs">+{stat.growth}%</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

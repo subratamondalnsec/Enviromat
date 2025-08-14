@@ -11,11 +11,15 @@ import OrdersList from '../components/core/RecyclingDashboard/OrdersList';
 import SalesStatistics from '../components/core/RecyclingDashboard/SalesStatistics';
 import RevenueOverview from '../components/core/RecyclingDashboard/RevenueOverview';
 import CategoryPerformance from '../components/core/RecyclingDashboard/CategoryPerformance';
+import AddProductModal from '../components/core/RecyclingDashboard/AddProductModal'; // NEW
 
 const RecyclingBusinessDashboard = () => {
   const pageRef = useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.profile);
+
+  // Modal state for adding products
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   // Business data state - TODO: Replace with real API data
   const [businessData] = useState({
@@ -96,6 +100,21 @@ const RecyclingBusinessDashboard = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Handle add product modal
+  const handleAddProduct = () => {
+    setShowAddProductModal(true);
+  };
+
+  const handleCloseProductModal = () => {
+    setShowAddProductModal(false);
+  };
+
+  const handleProductCreate = (productData) => {
+    // TODO: Handle product creation with API
+    console.log('New product created:', productData);
+    // You can add logic here to update the product list or trigger a refresh
+  };
+
   // GSAP Animations
   useEffect(() => {
     if (!pageRef.current) return;
@@ -144,7 +163,10 @@ const RecyclingBusinessDashboard = () => {
       <div className="max-w-7xl mx-auto mt-12 px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Business Header */}
         <div className="animate-section">
-          <BusinessHeader businessInfo={businessData.businessInfo} />
+          <BusinessHeader 
+            businessInfo={businessData.businessInfo} 
+            onAddProduct={handleAddProduct}
+          />
         </div>
 
         {/* Main Content Grid */}
@@ -181,6 +203,13 @@ const RecyclingBusinessDashboard = () => {
           <SalesStatistics salesData={businessData.salesStats} />
         </div>
       </div>
+
+      {/* Add Product Modal */}
+      <AddProductModal
+        show={showAddProductModal}
+        onClose={handleCloseProductModal}
+        onCreate={handleProductCreate}
+      />
     </div>
   );
 };

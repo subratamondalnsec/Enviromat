@@ -116,9 +116,7 @@ function App() {
         } />
 
         <Route path="recycling-business-dashboard" element={
-          <PrivateRoute>
             <RecyclingBusinessDashboard />
-          </PrivateRoute>
         } />
 
         {/* Catch-all route for 404 errors */}
