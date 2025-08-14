@@ -76,7 +76,7 @@ const OurMission = () => {
             <div
               key={index}
               ref={el => cardsRef.current[index] = el}
-              className="bg-gray-50 rounded-3xl p-8 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
+              className="bg-gray-50 rounded-3xl p-8 text-center shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-2"
             >
               <div className="flex justify-center mb-6">
                 <div className="bg-white rounded-full p-4 shadow-md">

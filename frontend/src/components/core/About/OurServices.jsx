@@ -91,8 +91,8 @@ const OurServices = () => {
             <motion.div
               key={index}
               ref={el => cardsRef.current[index] = el}
-              className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
-              whileHover={{ y: -5 }}
+              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300"
+              whileHover={{ y: -2 }}
             >
               <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${service.color} text-white mb-6`}>
                 {service.icon}

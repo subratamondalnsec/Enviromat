@@ -9,7 +9,6 @@ import OurMission from '../components/core/About/OurMission';
 import OurServices from '../components/core/About/OurServices';
 import WhyChooseUs from '../components/core/About/ChooseUs';
 import OurTeam from '../components/core/About/OurTeam';
-import CallToAction from '../components/core/About/CallToAction';
 import Footer from '../components/common/Footer';
 
 const AboutPage = () => {
