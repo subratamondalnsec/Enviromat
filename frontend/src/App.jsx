@@ -24,6 +24,7 @@ import UserProfile from './Pages/UserProfile';
 import PickupDashboard from './Pages/PickupDashboard';
 import PickerProfile from './Pages/PickerProfile';
 import EditPickerProfile from './Pages/EditPickerProfile';
+import RecyclingBusinessDashboard from "./Pages/RecyclingBusinessDashboard";
 
 function App() {
   const location = useLocation();
@@ -112,6 +113,12 @@ function App() {
           <PickerProtectedRoute>
             <PickerProfile />
           </PickerProtectedRoute>
+        } />
+
+        <Route path="recycling-business-dashboard" element={
+          <PrivateRoute>
+            <RecyclingBusinessDashboard />
+          </PrivateRoute>
         } />
 
         {/* Catch-all route for 404 errors */}
