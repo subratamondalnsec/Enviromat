@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 
 // Import profile API and actions
-import { updatePickerProfile } from '../../../services/operations/profileAPI';
-import { setUser } from '../../../slices/profileSlice';
+import { updatePickerProfile } from '../../../services/operations/pickerAPI';
+import { setPicker } from '../../../slices/pickerSlice';
 
 const EditPickerProfile = ({ profile, onCancel, onSave }) => {
   const dispatch = useDispatch();
@@ -124,11 +124,7 @@ const EditPickerProfile = ({ profile, onCancel, onSave }) => {
     try {
       const updatedProfile = await dispatch(updatePickerProfile(user._id, formData));
       
-      // Update the user state in Redux and localStorage
-      const updatedUser = { ...user, ...formData };
-      dispatch(setUser(updatedUser));
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      
+      // Profile will be updated in Redux store by the API action
       toast.success('Profile updated successfully');
       onSave(updatedProfile);
     } catch (error) {

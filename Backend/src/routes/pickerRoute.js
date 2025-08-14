@@ -12,6 +12,9 @@ const {
 const {
   getPickerProfile,
   updatePickerProfile,
+  getAssignedPickups,
+  getEmergencyPickups,
+  getDashboardStats,
 } = require("../controllers/PickerProfile")
 
 const { auth } = require("../middleware/auth")
@@ -43,7 +46,7 @@ router.post("/changepassword", auth, changePassword)
 router.post("/logout", logout)
 
 // ********************************************************************************************************
-//                                      Profile routes (TODO: Implement controllers)
+//                                      Profile routes
 // ********************************************************************************************************
 
 // Route for getting picker profile
@@ -51,5 +54,14 @@ router.get("/profile/:id", auth, getPickerProfile)
 
 // Route for updating picker profile
 router.put("/profile/:id", auth, updatePickerProfile)
+
+// Route for getting assigned pickups
+router.get("/assigned-pickups/:id", auth, getAssignedPickups)
+
+// Route for getting emergency pickups
+router.get("/emergency-pickups/:id", auth, getEmergencyPickups)
+
+// Route for getting dashboard statistics
+router.get("/dashboard-stats/:id", auth, getDashboardStats)
 
 module.exports = router

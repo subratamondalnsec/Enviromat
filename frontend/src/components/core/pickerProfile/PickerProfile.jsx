@@ -14,7 +14,7 @@ import {
   Layers3,
   Map,
 } from "lucide-react";
-import { getPickerProfile } from "../../../services/operations/profileAPI";
+import { loadPickerDashboard } from "../../../services/operations/pickerAPI";
 import { Bar, Line } from "react-chartjs-2";
 import EditPickerProfile from "./EditPickerProfile";
 
@@ -36,90 +36,54 @@ const chartLabelClass = "text-lg font-semibold text-green-800 mb-4";
 
 const PickerProfile = () => {
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.profile);
-  const [profile, setProfile] = useState(null);
+  
+  // Get data from Redux store
+  const { user, loading: profileLoading } = useSelector((state) => state.profile);
+  const { 
+    picker, 
+    assignedPickups, 
+    emergencyPickups,
+    dashboardStats,
+    loading: pickerLoading, 
+    error 
+  } = useSelector((state) => state.picker);
+  
   const [isEditing, setIsEditing] = useState(false);
+  const loading = profileLoading || pickerLoading;
 
   const handleEditClick = () => setIsEditing(true);
   const handleCancel = () => setIsEditing(false);
-  const handleSaveProfile = (updated) => {
-    setProfile(updated);
+  const handleSaveProfile = () => {
     setIsEditing(false);
+    // Profile will be updated via Redux when API call succeeds
   };
 
+  // Load picker dashboard data on component mount
   useEffect(() => {
-    const defaultProfile = {
-      firstName: "Demo",
-      lastName: "Picker",
-      email: "picker@demo.com",
-      contactNumber: "+91 9800112233",
-      address: {
-        street: "32/A Eco Park Rd",
-        city: "Kolkata",
-        state: "West Bengal",
-        pinCode: "700156",
-      },
-      vehicleDetails: { vehicleType: "Truck", vehicleNumber: "WB 09 D 9987" },
-      serviceAreas: [
-        "Salt Lake",
-        "New Town",
-        "Rajarhat",
-        "Howrah",
-        "Park Street",
-        "Ballygunge",
-      ],
-      isActive: true,
-      image: "",
-      rating: { average: 4.8, count: 73 },
-      creditPoints: 540,
-      assignedPickups: Array(17).fill({}),
-      assignedDeliveries: Array(7).fill({}),
-      pickupStats: [
-        { month: "Jan", pickups: 11, wasteKg: 36 },
-        { month: "Feb", pickups: 15, wasteKg: 49 },
-        { month: "Mar", pickups: 19, wasteKg: 55 },
-        { month: "Apr", pickups: 16, wasteKg: 52 },
-        { month: "May", pickups: 21, wasteKg: 59 },
-        { month: "Jun", pickups: 23, wasteKg: 64 },
-        { month: "Jul", pickups: 28, wasteKg: 76 },
-        { month: "Aug", pickups: 31, wasteKg: 82 },
-        { month: "Sep", pickups: 29, wasteKg: 78 },
-        { month: "Oct", pickups: 22, wasteKg: 58 },
-        { month: "Nov", pickups: 18, wasteKg: 42 },
-        { month: "Dec", pickups: 17, wasteKg: 38 },
-      ],
+    const loadDashboardData = async () => {
+      if (user && user._id && user.accountType === "Picker") {
+        try {
+          await dispatch(loadPickerDashboard(user._id));
+        } catch (error) {
+          console.error("Failed to load picker dashboard:", error);
+        }
+      }
     };
 
-    // For now, use user data directly or fallback to default
-    if (user) {
-      setProfile({ ...defaultProfile, ...user });
-    } else {
-      setProfile(defaultProfile);
-    }
+    loadDashboardData();
+  }, [user, dispatch]);
 
-    // Comment out API call for now to avoid infinite loading
-    // const fetchProfile = async () => {
-    //   if (user && user._id) {
-    //     try {
-    //       const data = await dispatch(getPickerProfile(user._id));
-    //       setProfile({ ...defaultProfile, ...data });
-    //       return;
-    //     } catch (error) {
-    //       console.error("Failed to fetch picker profile:", error);
-    //       setProfile({ ...defaultProfile, ...user });
-    //       return;
-    //     }
-    //   }
-    //   // Set demo profile if no user or fetch fails
-    //   setProfile(defaultProfile);
-    // };
-    // fetchProfile();
-  }, [user]);
+  // Use picker data from Redux state, with fallback to user data
+  const profile = picker || user;
 
   // ----- Chart Data -----
-  const chartLabels = profile?.pickupStats?.map((d) => d.month) || [];
-  const pickupsData = profile?.pickupStats?.map((d) => d.pickups) || [];
-  const wasteData = profile?.pickupStats?.map((d) => d.wasteKg) || [];
+  // Use real dashboard stats from backend instead of hardcoded data
+  const chartLabels = dashboardStats?.monthlyData?.days || [];
+  const pickupsData = dashboardStats?.monthlyData?.pickups || [];
+  
+  // For waste data, we'll calculate from pickup quantities or use a default
+  // Since backend provides waste types count, we'll create synthetic weight data
+  const wasteData = pickupsData.map(pickupCount => pickupCount * 2.5); // Estimate 2.5kg per pickup
 
   const barData = {
     labels: chartLabels,
@@ -136,10 +100,6 @@ const PickerProfile = () => {
           "#818cf8bb",
           "#f97316bb",
           "#fde68a",
-          "#f43f5eaa",
-          "#3b82f6cc",
-          "#eab308cc",
-          "#a21cafaa",
         ],
         borderRadius: 8,
         maxBarThickness: 40,
@@ -173,7 +133,36 @@ const PickerProfile = () => {
   if (loading && !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4FFF6]">
-        <div className="animate-spin w-16 h-16 rounded-full border-b-4 border-green-500 mx-auto"></div>
+        <div className="text-center">
+          <div className="animate-spin w-16 h-16 rounded-full border-b-4 border-green-500 mx-auto mb-4"></div>
+          <p className="text-green-600 font-medium">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if needed
+  if (error && !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4FFF6]">
+        <div className="text-center">
+          <p className="text-red-600 font-medium mb-4">Failed to load profile</p>
+          <button 
+            onClick={() => dispatch(loadPickerDashboard(user?._id))}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if no profile data available
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4FFF6]">
+        <p className="text-gray-600">No profile data available</p>
       </div>
     );
   }
@@ -277,15 +266,15 @@ const PickerProfile = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           <div className={statCardStyles}>
             <div className="text-2xl text-blue-500 font-bold">
-              {profile?.assignedPickups?.length}
+              {dashboardStats?.completedPickups || 0}
             </div>
             <div className="text-md text-gray-500 mt-1 font-semibold">
-              Pickups
+              Completed Pickups
             </div>
           </div>
           <div className={statCardStyles}>
             <div className="text-2xl text-purple-600 font-bold">
-              {profile?.assignedDeliveries?.length}
+              {profile?.assignedDeliveries?.length || 0}
             </div>
             <div className="text-md text-gray-500 mt-1 font-semibold">
               Deliveries
@@ -293,10 +282,10 @@ const PickerProfile = () => {
           </div>
           <div className={statCardStyles}>
             <div className="text-2xl text-yellow-600 font-bold">
-              {profile?.rating?.average?.toFixed(1)}
+              {profile?.rating?.average?.toFixed(1) || "0.0"}
             </div>
             <div className="text-md text-gray-500 mt-1 font-semibold">
-              Avg. Rating
+              Avg. Rating ({profile?.rating?.count || 0})
             </div>
           </div>
         </div>
@@ -416,41 +405,48 @@ const PickerProfile = () => {
         {/* ---------- ANALYTICS ---------- */}
         <div className={chartCardStyles}>
           <div className={chartLabelClass}>Monthly Pickups & Waste Collection</div>
-          <div className="w-full md:flex gap-8 items-start">
-            <div className="md:w-3/5 w-full min-w-[250px]">
-              <Bar
-                data={barData}
-                options={{
-                  plugins: {
-                    legend: { position: "top", labels: { color: "#222" } },
-                  },
-                  responsive: true,
-                  scales: {
-                    x: { grid: { display: false }, ticks: { color: "#444" } },
-                    y: { grid: { color: "#eee" }, ticks: { color: "#444" } },
-                  },
-                }}
-                height={225}
-              />
-            </div>
-            <div className="md:w-2/5 w-full mt-8 md:mt-0">
-              <div className="mb-2 font-semibold text-green-900 text-xs">
-                Waste (kg) Trend
+          {chartLabels.length > 0 ? (
+            <div className="w-full md:flex gap-8 items-start">
+              <div className="md:w-3/5 w-full min-w-[250px]">
+                <Bar
+                  data={barData}
+                  options={{
+                    plugins: {
+                      legend: { position: "top", labels: { color: "#222" } },
+                    },
+                    responsive: true,
+                    scales: {
+                      x: { grid: { display: false }, ticks: { color: "#444" } },
+                      y: { grid: { color: "#eee" }, ticks: { color: "#444" } },
+                    },
+                  }}
+                  height={225}
+                />
               </div>
-              <Line
-                data={lineData}
-                options={{
-                  plugins: { legend: { display: false } },
-                  responsive: true,
-                  scales: {
-                    x: { grid: { display: false }, ticks: { color: "#555" } },
-                    y: { grid: { color: "#f2f1fa" }, ticks: { color: "#999" } },
-                  },
-                }}
-                height={110}
-              />
+              <div className="md:w-2/5 w-full mt-8 md:mt-0">
+                <div className="mb-2 font-semibold text-green-900 text-xs">
+                  Waste (kg) Trend
+                </div>
+                <Line
+                  data={lineData}
+                  options={{
+                    plugins: { legend: { display: false } },
+                    responsive: true,
+                    scales: {
+                      x: { grid: { display: false }, ticks: { color: "#555" } },
+                      y: { grid: { color: "#f2f1fa" }, ticks: { color: "#999" } },
+                    },
+                  }}
+                  height={110}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg mb-2">No pickup data available yet</p>
+              <p className="text-gray-400 text-sm">Charts will appear once you complete your first pickups</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

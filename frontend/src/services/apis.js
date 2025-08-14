@@ -21,6 +21,9 @@ export const pickerEndpoints = {
   RESETPASSWORD_API: BASE_URL + "/picker/reset-password",
   GET_PROFILE_API: BASE_URL + "/picker/profile",
   UPDATE_PROFILE_API: BASE_URL + "/picker/profile",
+  GET_ASSIGNED_PICKUPS_API: BASE_URL + "/picker/assigned-pickups",
+  GET_EMERGENCY_PICKUPS_API: BASE_URL + "/picker/emergency-pickups",
+  GET_DASHBOARD_STATS_API: BASE_URL + "/picker/dashboard-stats",
 };
 
 // USER PROFILE ENDPOINTS

@@ -20,6 +20,32 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
     return () => ctx.revert();
   }, [pickups]);
 
+  // Helper function to format pickup status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'assigned':
+        return 'bg-blue-100 text-blue-800';
+      case 'processing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Helper function to format waste type
+  const formatWasteType = (wasteType) => {
+    return wasteType.replace('_', ' ').toUpperCase();
+  };
+
+  // Helper function to format address
+  const formatAddress = (address) => {
+    return `${address.street}, ${address.city}, ${address.state}`;
+  };
+
   return (
     <div 
       ref={refSetter}
@@ -31,7 +57,7 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
           Scheduled Pickups
         </h2>
         <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-          {pickups.length} Today
+          {pickups.length} Assigned
         </span>
       </div>
 
@@ -39,12 +65,12 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
         {pickups.length === 0 ? (
           <div className="text-center py-8">
             <Package className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-500">No scheduled pickups today</p>
+            <p className="text-gray-500">No scheduled pickups</p>
           </div>
         ) : (
           pickups.map((pickup) => (
             <motion.div
-              key={pickup.id}
+              key={pickup._id}
               className="border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-all duration-300"
               whileHover={{ y: -2 }}
             >
@@ -52,26 +78,30 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
                 <div className="flex items-center space-x-2">
                   <User className="w-4 h-4 text-purple-500" />
                   <span className="font-semibold text-gray-900 text-sm md:text-base">
-                    {pickup.customerName}
+                    {pickup.userId?.firstName} {pickup.userId?.lastName}
                   </span>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  pickup.wasteType === 'plastic' ? 'bg-green-100 text-green-800' :
-                  pickup.wasteType === 'paper' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {pickup.wasteType}
-                </span>
+                <div className="flex flex-col space-y-1">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(pickup.pickupStatus)}`}>
+                    {pickup.pickupStatus.toUpperCase()}
+                  </span>
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {formatWasteType(pickup.wasteType)}
+                  </span>
+                </div>
               </div>
               
               <div className="space-y-2">
                 <div className="flex items-center text-gray-600 text-sm">
                   <MapPin className="w-4 h-4 mr-2" />
-                  <span className="truncate">{pickup.location}</span>
+                  <span className="truncate">{formatAddress(pickup.address)}</span>
                 </div>
-                <div className="flex items-center text-gray-600 text-sm">
-                  <Clock className="w-4 h-4 mr-2" />
-                  <span>{pickup.time}</span>
+                <div className="flex items-center justify-between text-gray-600 text-sm">
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    <span>{new Date(pickup.date).toLocaleDateString()}</span>
+                  </div>
+                  <span className="font-medium">Qty: {pickup.quantity} kg</span>
                 </div>
               </div>
             </motion.div>

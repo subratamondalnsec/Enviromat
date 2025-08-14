@@ -28,11 +28,11 @@ ChartJS.register(
   Filler
 );
 
-const PickupStatistics = ({ monthlyData, refSetter }) => {
+const PickupStatistics = ({ dashboardStats, refSetter }) => {
   const chartRef = useRef(null);
 
-  // Add null checks for monthlyData
-  if (!monthlyData) {
+  // Add null checks for dashboardStats
+  if (!dashboardStats || !dashboardStats.monthlyData) {
     return (
       <div className="bg-white rounded-3xl p-4 md:p-6 shadow-lg">
         <div className="flex items-center justify-center h-64">
@@ -41,6 +41,8 @@ const PickupStatistics = ({ monthlyData, refSetter }) => {
       </div>
     );
   }
+
+  const { monthlyData, totalPickups, completedPickups, pendingPickups, totalEarnings } = dashboardStats;
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -145,7 +147,7 @@ const PickupStatistics = ({ monthlyData, refSetter }) => {
     }
   };
 
-  const totalPickups = monthlyData.pickups.reduce((sum, count) => sum + count, 0);
+  const monthlyPickupsTotal = monthlyData.pickups.reduce((sum, count) => sum + count, 0);
 
   return (
     <div 
@@ -188,22 +190,16 @@ const PickupStatistics = ({ monthlyData, refSetter }) => {
           <div className="text-xs text-gray-600">Total Pickups</div>
         </div>
         <div className="text-center p-3 bg-purple-100 rounded-xl">
-          <div className="text-lg md:text-xl font-bold text-purple-600">
-            {Math.round(totalPickups / monthlyData.days.length)}
-          </div>
-          <div className="text-xs text-gray-600">Daily Average</div>
+          <div className="text-lg md:text-xl font-bold text-purple-600">{completedPickups}</div>
+          <div className="text-xs text-gray-600">Completed</div>
         </div>
         <div className="text-center p-3 bg-blue-100 rounded-xl">
-          <div className="text-lg md:text-xl font-bold text-blue-600">
-            {Math.max(...monthlyData.pickups)}
-          </div>
-          <div className="text-xs text-gray-600">Peak Day</div>
+          <div className="text-lg md:text-xl font-bold text-blue-600">{pendingPickups}</div>
+          <div className="text-xs text-gray-600">Pending</div>
         </div>
         <div className="text-center p-3 bg-orange-100 rounded-xl">
-          <div className="text-lg md:text-xl font-bold text-orange-600">
-            {monthlyData.wasteTypes.reduce((max, current) => Math.max(max, current), 0)}
-          </div>
-          <div className="text-xs text-gray-600">Top Waste</div>
+          <div className="text-lg md:text-xl font-bold text-orange-600">{totalEarnings}</div>
+          <div className="text-xs text-gray-600">Credit Points</div>
         </div>
       </div>
     </div>

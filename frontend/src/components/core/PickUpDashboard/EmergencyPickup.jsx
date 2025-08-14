@@ -23,12 +23,33 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
     return () => ctx.revert();
   }, [safeEmergencies]);
 
-  const getPriorityColor = (priority) => {
-    switch (priority.toLowerCase()) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const getPriorityColor = (isEmergency) => {
+    return isEmergency ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800';
+  };
+
+  // Helper function to format waste type
+  const formatWasteType = (wasteType) => {
+    return wasteType.replace('_', ' ').toUpperCase();
+  };
+
+  // Helper function to format address
+  const formatAddress = (address) => {
+    return `${address.street}, ${address.city}, ${address.state}`;
+  };
+
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'assigned':
+        return 'bg-blue-100 text-blue-800';
+      case 'processing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -43,7 +64,7 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
           Emergency Pickups
         </h2>
         <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
-          {safeEmergencies.length} Urgent
+          {safeEmergencies.length} Emergency
         </span>
       </div>
 
@@ -56,7 +77,7 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
         ) : (
           safeEmergencies.map((emergency) => (
             <motion.div
-              key={emergency.id}
+              key={emergency._id}
               className="border-l-4 border-red-500 bg-red-50 rounded-2xl p-4 hover:shadow-md transition-all duration-300"
               whileHover={{ y: -2 }}
             >
@@ -64,26 +85,34 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
                 <div className="flex items-center space-x-2">
                   <User className="w-4 h-4 text-red-600" />
                   <span className="font-semibold text-gray-900 text-sm md:text-base">
-                    {emergency.customerName}
+                    {emergency.userId?.firstName} {emergency.userId?.lastName}
                   </span>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPriorityColor(emergency.priority)}`}>
-                  {emergency.priority}
-                </span>
+                <div className="flex flex-col space-y-1">
+                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${getPriorityColor(emergency.isEmergency)}`}>
+                    URGENT
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(emergency.pickupStatus)}`}>
+                    {emergency.pickupStatus.toUpperCase()}
+                  </span>
+                </div>
               </div>
               
               <div className="space-y-2">
                 <div className="flex items-center text-gray-700 text-sm">
                   <MapPin className="w-4 h-4 mr-2 text-red-500" />
-                  <span className="truncate">{emergency.location}</span>
+                  <span className="truncate">{formatAddress(emergency.address)}</span>
                 </div>
-                <div className="flex items-center text-gray-700 text-sm">
-                  <Clock className="w-4 h-4 mr-2 text-red-500" />
-                  <span>{emergency.requestedTime}</span>
+                <div className="flex items-center justify-between text-gray-700 text-sm">
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-2 text-red-500" />
+                    <span>{new Date(emergency.date).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="font-medium">{formatWasteType(emergency.wasteType)}</span>
+                    <span className="font-medium">Qty: {emergency.quantity} kg</span>
+                  </div>
                 </div>
-                <p className="text-sm text-red-700 font-medium">
-                  {emergency.reason}
-                </p>
               </div>
             </motion.div>
           ))
