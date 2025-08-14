@@ -204,11 +204,10 @@ const HeroSection = () => {
       });
     });
 
-    // Cleanup function (no ScrollTrigger to clean up)
     return () => {
       tl.kill();
     };
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   return (
     <section ref={sectionRef} className="relative min-h-screen overflow-hidden">

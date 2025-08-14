@@ -30,7 +30,6 @@ const CommunityPage = () => {
   const postsRef = useRef([]);
 
   useEffect(() => {
-    // Load blogs from backend on component mount
     const loadBlogs = async () => {
       try {
         dispatch(setLoading(true));
@@ -38,7 +37,6 @@ const CommunityPage = () => {
         if (response && response.data) {
           dispatch(setBlogs(response.data));
           
-          // Show welcome toast only once per session
           const hasShownToast = sessionStorage.getItem('communityWelcomeToastShown');
           if (!hasShownToast && !hasShownWelcomeToast) {
             toast.success(`Welcome! ${response.data.length} blog${response.data.length !== 1 ? 's' : ''} loaded`);
