@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { useDispatch, useSelector } from 'react-redux';
-import {FaHeart} from 'react-icons/fa'
+import {FaHeart, FaRegHeart, FaComment, FaRegComment} from 'react-icons/fa'
 import { MessageCircle, MoreVertical, Edit, Trash2, Eye } from 'lucide-react';
 import { toggleLikeBlog, addCommentToBlog, deleteBlog } from '../../../services/operations/communityApi';
 import { DEFAULT_AVATAR } from '../../../utils/constants';
@@ -20,7 +20,6 @@ const PostCard = ({ post, onLike, onAddComment, refSetter, onViewDetails, onEdit
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.profile || {});
 
-  // Check if current user is the author of this post
   const isAuthor = user && user._id === post.author?._id;
 
   const handleLike = async () => {
@@ -29,7 +28,6 @@ const PostCard = ({ post, onLike, onAddComment, refSetter, onViewDetails, onEdit
     setIsLiking(true);
     try {
       await dispatch(toggleLikeBlog(post._id));
-      // Redux state is updated automatically in the API function
     } catch (error) {
       console.error('Error liking blog:', error);
     } finally {
@@ -43,7 +41,6 @@ const PostCard = ({ post, onLike, onAddComment, refSetter, onViewDetails, onEdit
     setIsDeleting(true);
     try {
       await dispatch(deleteBlog(post._id));
-      // The post will be removed from Redux state automatically
       setShowDropdown(false);
     } catch (error) {
       console.error('Error deleting blog:', error);
@@ -73,7 +70,6 @@ const PostCard = ({ post, onLike, onAddComment, refSetter, onViewDetails, onEdit
     setIsCommenting(true);
     try {
       await dispatch(addCommentToBlog(post._id, commentText.trim()));
-      // Redux state is updated automatically in the API function
       setCommentText('');
     } catch (error) {
       console.error('Error adding comment:', error);
@@ -183,16 +179,26 @@ const PostCard = ({ post, onLike, onAddComment, refSetter, onViewDetails, onEdit
 
       <div className="flex gap-6 mb-4 border-b border-gray-100 pb-3">
         <button
-          className={`inline-flex items-center space-x-2 text-red-500 hover:text-red-600 group ${isLiking ? 'opacity-50' : ''}`}
+          className={`inline-flex items-center space-x-2 group ${isLiking ? 'opacity-50' : ''}`}
           onClick={handleLike}
           disabled={isLiking}
         >
-          <FaHeart className="w-5 h-5 group-hover:scale-110 transition" />
-          <span>{post.likesCount || 0}</span>
+          {(post.likesCount || 0) > 0 ? (
+            <FaHeart className="w-5 h-5 text-red-500 group-hover:scale-110 transition" />
+          ) : (
+            <FaRegHeart className="w-5 h-5 text-gray-400 group-hover:text-red-500 group-hover:scale-110 transition" />
+          )}
+          <span className={(post.likesCount || 0) > 0 ? 'text-red-500' : 'text-gray-500'}>{post.likesCount || 0}</span>
         </button>
-        <div className="inline-flex items-center space-x-1 text-gray-500">
-          <MessageCircle className="w-5 h-5" />
-          <span>{post.commentsCount || (comments.length || 0)}</span>
+        <div className="inline-flex items-center space-x-1">
+          {(post.commentsCount || comments.length || 0) > 0 ? (
+            <MessageCircle className="w-5 h-5 text-blue-500" />
+          ) : (
+            <MessageCircle className="w-5 h-5 text-gray-400" />
+          )}
+          <span className={(post.commentsCount || comments.length || 0) > 0 ? 'text-blue-500' : 'text-gray-500'}>
+            {post.commentsCount || (comments.length || 0)}
+          </span>
         </div>
       </div>
 

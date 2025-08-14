@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ProductCard from '../components/core/Shop/ProductCard';
 import products from '../components/core/Shop/Data';
 import Checkout from './Checkout'; // Import Checkout component
+import Footer from '../components/common/Footer';
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -431,6 +432,9 @@ const Shop = () => {
           </motion.section>
         )}
       </AnimatePresence>
+      
+      {/* Footer - Only show when not in checkout mode */}
+      {!showCheckout && <Footer />}
     </>
   );
 };

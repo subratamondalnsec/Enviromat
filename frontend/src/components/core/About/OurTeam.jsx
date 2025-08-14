@@ -90,8 +90,8 @@ const OurTeam = () => {
             <motion.div
               key={index}
               ref={el => cardsRef.current[index] = el}
-              className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-              whileHover={{ y: -5 }}
+              className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300"
+              whileHover={{ y: -2 }}
             >
               <div className="relative mb-6">
                 <div className={`w-24 h-24 rounded-full bg-gradient-to-r ${member.color} mx-auto flex items-center justify-center text-white text-2xl font-bold`}>

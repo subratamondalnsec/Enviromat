@@ -39,10 +39,8 @@ const BlogFilters = ({ onFilterChange }) => {
       let blogsData;
       
       if (filterType === 'most-liked') {
-        // Get all blogs and sort them by likes count
         const allBlogsResponse = await dispatch(getAllBlogs());
         if (allBlogsResponse?.data) {
-          // Sort blogs by likesCount in descending order and take top 10
           const sortedBlogs = [...allBlogsResponse.data]
             .sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0))
             .slice(0, 10); // Show top 10 most liked posts
@@ -106,7 +104,7 @@ const BlogFilters = ({ onFilterChange }) => {
           onClick={() => setShowDropdown(!showDropdown)}
           className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 hover:bg-blue-100 hover:text-blue-800 hover:border-blue-400 ${
             BLOG_CATEGORIES.includes(activeFilter)
-              ? 'bg-green-500 text-white shadow-lg'
+              ? 'bg-blue-500 text-white shadow-lg'
               : 'bg-white text-gray-700 border border-gray-300'
           }`}
         >

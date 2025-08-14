@@ -137,7 +137,7 @@ const PickupDashboard = () => {
     };
 
     fetchProfile();
-  }, [user]); // Remove dispatch from dependencies to avoid infinite loop
+  }, [user]);
 
   // Handle profile edit
   const handleEditProfile = () => {
@@ -182,7 +182,6 @@ const PickupDashboard = () => {
     return () => ctx.revert();
   }, [profile]);
 
-  // Show loading state if profile is being fetched
   if (loading && !profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
