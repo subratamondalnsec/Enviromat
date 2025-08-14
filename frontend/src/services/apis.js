@@ -24,6 +24,7 @@ export const pickerEndpoints = {
   GET_ASSIGNED_PICKUPS_API: BASE_URL + "/picker/assigned-pickups",
   GET_EMERGENCY_PICKUPS_API: BASE_URL + "/picker/emergency-pickups",
   GET_DASHBOARD_STATS_API: BASE_URL + "/picker/dashboard-stats",
+  COMPLETE_TASK_API: BASE_URL + "/picker/complete-task",
 };
 
 // USER PROFILE ENDPOINTS

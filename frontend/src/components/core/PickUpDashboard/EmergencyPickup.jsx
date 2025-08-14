@@ -1,11 +1,17 @@
 // components/pickup/EmergencyPickups.jsx
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { AlertTriangle, MapPin, Clock, User, Zap } from 'lucide-react';
+import { useDispatch } from 'react-redux';
 import gsap from 'gsap';
+import PickupDetailsModal from './PickupDetailsModal';
+import { markPickupSuccessful } from '../../../services/operations/pickerAPI';
 
 const EmergencyPickups = ({ emergencies, refSetter }) => {
   const listRef = useRef(null);
+  const [selectedPickup, setSelectedPickup] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   // Add null check for emergencies
   const safeEmergencies = emergencies || [];
@@ -53,6 +59,27 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
     }
   };
 
+  // Handle pickup card click
+  const handlePickupClick = (pickup) => {
+    setSelectedPickup(pickup);
+    setIsModalOpen(true);
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedPickup(null);
+  };
+
+  // Handle mark as successful
+  const handleMarkSuccessful = async (pickupId, isEmergency) => {
+    try {
+      await dispatch(markPickupSuccessful(pickupId, isEmergency));
+    } catch (error) {
+      console.error('Error marking pickup as successful:', error);
+    }
+  };
+
   return (
     <div 
       ref={refSetter}
@@ -78,8 +105,9 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
           safeEmergencies.map((emergency) => (
             <motion.div
               key={emergency._id}
-              className="border-l-4 border-red-500 bg-red-50 rounded-2xl p-4 hover:shadow-md transition-all duration-300"
+              className="border-l-4 border-red-500 bg-red-50 rounded-2xl p-4 hover:shadow-md transition-all duration-300 cursor-pointer"
               whileHover={{ y: -2 }}
+              onClick={() => handlePickupClick(emergency)}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
@@ -118,6 +146,14 @@ const EmergencyPickups = ({ emergencies, refSetter }) => {
           ))
         )}
       </div>
+
+      {/* Pickup Details Modal */}
+      <PickupDetailsModal
+        pickup={selectedPickup}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onMarkSuccessful={handleMarkSuccessful}
+      />
     </div>
   );
 };

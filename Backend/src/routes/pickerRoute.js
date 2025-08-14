@@ -17,6 +17,10 @@ const {
   getDashboardStats,
 } = require("../controllers/PickerProfile")
 
+const {
+  doneDeliverOrPickup,
+} = require("../controllers/PickupConroller")
+
 const { auth } = require("../middleware/auth")
 
 // Routes for Picker Login, Signup, and Authentication
@@ -63,5 +67,8 @@ router.get("/emergency-pickups/:id", auth, getEmergencyPickups)
 
 // Route for getting dashboard statistics
 router.get("/dashboard-stats/:id", auth, getDashboardStats)
+
+// Route for marking pickup/delivery as completed
+router.post("/complete-task", auth, doneDeliverOrPickup)
 
 module.exports = router

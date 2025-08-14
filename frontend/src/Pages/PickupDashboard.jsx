@@ -125,7 +125,7 @@ const PickupDashboard = () => {
             className="flex-1"
             ref={scheduledRef}
           >
-            <ScheduledPickups pickups={assignedPickups || []} />
+            <ScheduledPickups pickups={assignedPickups || []} refSetter={(ref) => scheduledRef.current = ref} />
           </div>
 
           {/* Right section - Emergency Pickups */}
@@ -133,7 +133,7 @@ const PickupDashboard = () => {
             className="flex-1"
             ref={emergencyRef}
           >
-            <EmergencyPickups emergencies={emergencyPickups || []} />
+            <EmergencyPickups emergencies={emergencyPickups || []} refSetter={(ref) => emergencyRef.current = ref} />
           </div>
         </div>
 

@@ -1,11 +1,17 @@
 // components/pickup/ScheduledPickups.jsx
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Clock, User, Package } from 'lucide-react';
+import { useDispatch } from 'react-redux';
 import gsap from 'gsap';
+import PickupDetailsModal from './PickupDetailsModal';
+import { markPickupSuccessful } from '../../../services/operations/pickerAPI';
 
 const ScheduledPickups = ({ pickups, refSetter }) => {
   const listRef = useRef(null);
+  const [selectedPickup, setSelectedPickup] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -46,6 +52,27 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
 
+  // Handle pickup card click
+  const handlePickupClick = (pickup) => {
+    setSelectedPickup(pickup);
+    setIsModalOpen(true);
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedPickup(null);
+  };
+
+  // Handle mark as successful
+  const handleMarkSuccessful = async (pickupId, isEmergency) => {
+    try {
+      await dispatch(markPickupSuccessful(pickupId, isEmergency));
+    } catch (error) {
+      console.error('Error marking pickup as successful:', error);
+    }
+  };
+
   return (
     <div 
       ref={refSetter}
@@ -71,8 +98,9 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
           pickups.map((pickup) => (
             <motion.div
               key={pickup._id}
-              className="border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-all duration-300"
+              className="border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-all duration-300 cursor-pointer"
               whileHover={{ y: -2 }}
+              onClick={() => handlePickupClick(pickup)}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
@@ -108,6 +136,14 @@ const ScheduledPickups = ({ pickups, refSetter }) => {
           ))
         )}
       </div>
+
+      {/* Pickup Details Modal */}
+      <PickupDetailsModal
+        pickup={selectedPickup}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onMarkSuccessful={handleMarkSuccessful}
+      />
     </div>
   );
 };

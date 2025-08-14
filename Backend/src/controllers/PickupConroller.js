@@ -67,7 +67,7 @@ exports.removeOrderOrPickupFromBag = async (req, res) => {
   }
 };
 
-// 3. Mark delivery/pickup as done
+// 3. Mark delivery/pickup as done kajalagei che
 exports.doneDeliverOrPickup = async (req, res) => {
   const { type, itemId } = req.body;
   const runnerId = req.user.id;
@@ -119,11 +119,16 @@ exports.doneDeliverOrPickup = async (req, res) => {
       pickup.pickupDate = new Date();
       await pickup.save();
 
+      // Remove from both assigned and emergency pickups arrays
       runner.assignedPickups = runner.assignedPickups.filter(
         (id) => id.toString() !== itemId
       );
+      runner.emergencyPickups = runner.emergencyPickups.filter(
+        (id) => id.toString() !== itemId
+      );
 
-      pointsEarned = 10; // 🎁 10 points per pickup
+      // Give more points for emergency pickups
+      pointsEarned = pickup.isEmergency ? 15 : 10;
       runner.creditPoints += pointsEarned;
     }
 

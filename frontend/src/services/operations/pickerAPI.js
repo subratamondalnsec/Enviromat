@@ -8,7 +8,8 @@ import {
   setDashboardStats,
   setLoading, 
   setError,
-  clearError
+  clearError,
+  updatePickupStatus
 } from "../../slices/pickerSlice";
 
 const { 
@@ -16,7 +17,8 @@ const {
   UPDATE_PROFILE_API,
   GET_ASSIGNED_PICKUPS_API,
   GET_EMERGENCY_PICKUPS_API,
-  GET_DASHBOARD_STATS_API
+  GET_DASHBOARD_STATS_API,
+  COMPLETE_TASK_API
 } = pickerEndpoints;
 
 // Get picker profile with populated pickups
@@ -184,6 +186,51 @@ export function updatePickerProfile(pickerId, profileData) {
       dispatch(setError(error.message));
       toast.dismiss(toastId);
       toast.error("Failed to update profile");
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+}
+
+// Mark pickup as successful
+export function markPickupSuccessful(pickupId, isEmergency) {
+  return async (dispatch) => {
+    const toastId = toast.loading("Updating pickup status...");
+    dispatch(setLoading(true));
+    dispatch(clearError());
+    
+    try {
+      const response = await apiConnector("POST", COMPLETE_TASK_API, {
+        type: "pickup",
+        itemId: pickupId
+      });
+      
+      if (!response?.data?.success) {
+        throw new Error(response?.data?.message || "Failed to update pickup status");
+      }
+
+      // Update pickup status in Redux store
+      dispatch(updatePickupStatus({ pickupId, status: "delivered", isEmergency }));
+      
+      // Refresh dashboard data
+      const pickerId = JSON.parse(localStorage.getItem("user"))?._id;
+      if (pickerId) {
+        await Promise.all([
+          dispatch(getAssignedPickups(pickerId)),
+          dispatch(getEmergencyPickups(pickerId)),
+          dispatch(getDashboardStats(pickerId))
+        ]);
+      }
+
+      toast.dismiss(toastId);
+      toast.success(`Pickup marked as successful! Earned ${response.data.data.pointsEarned} points!`);
+      return response.data;
+    } catch (error) {
+      console.log("MARK_PICKUP_SUCCESSFUL_API ERROR............", error);
+      dispatch(setError(error.message));
+      toast.dismiss(toastId);
+      toast.error(error.message || "Failed to update pickup status");
       throw error;
     } finally {
       dispatch(setLoading(false));
