@@ -10,7 +10,7 @@ import OurServices from '../components/core/About/OurServices';
 import WhyChooseUs from '../components/core/About/ChooseUs';
 import OurTeam from '../components/core/About/OurTeam';
 import CallToAction from '../components/core/About/CallToAction';
-// import Footer from '../components/common/Footer';
+import Footer from '../components/common/Footer';
 
 const AboutPage = () => {
   const pageRef = useRef(null);
@@ -47,7 +47,7 @@ const AboutPage = () => {
         <OurServices />
         <WhyChooseUs />
         <OurTeam />
-        <CallToAction />
+        <Footer />
       </div>
     </div>
   );
