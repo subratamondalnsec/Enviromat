@@ -90,6 +90,12 @@ const pickerSchema = new mongoose.Schema(
         ref: "PickupRequest", // Waste pickups
       },
     ],
+    emergencyPickups: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PickupRequest", // Waste pickups
+      },
+    ],
     assignedDeliveries: [
       {
         type: mongoose.Schema.Types.ObjectId,
