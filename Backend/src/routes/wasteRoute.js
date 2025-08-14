@@ -5,10 +5,6 @@ const { auth } = require("../middleware/auth")
 
 
 // POST /api/waste/upload -> for uploading Waste
-router.post(
-    '/upload',
-    auth,
-    uploadWaste
-);
+router.post( '/upload', auth, uploadWaste );
 
 module.exports = router;

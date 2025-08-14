@@ -76,6 +76,10 @@ const PickupRequestSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    isEmergency: {
+        type: Boolean,
+        default: false,
+    },
     pickupDate:{
         type:Date,
     }
