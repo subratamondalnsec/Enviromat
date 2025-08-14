@@ -1,16 +1,68 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const Footer = () => {
+  const footerRef = useRef(null);
+  const isInView = useInView(footerRef, { once: true, margin: "-100px" });
+
+  // Animation variants for different sliding directions
+  const slideFromLeft = {
+    hidden: { x: -50, opacity: 0 },
+    visible: (index) => ({
+      x: 0,
+      opacity: 1,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    })
+  };
+
+  const slideFromRight = {
+    hidden: { x: 50, opacity: 0 },
+    visible: (index) => ({
+      x: 0,
+      opacity: 1,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    })
+  };
+
+  const slideFromBottom = {
+    hidden: { y: 30, opacity: 0 },
+    visible: (index) => ({
+      y: 0,
+      opacity: 1,
+      transition: {
+        delay: index * 0.1,
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
-    <footer className="bg-black relative">
+    <footer ref={footerRef} className="bg-black relative">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Left Column - Logo and Navigation */}
-          <div className="space-y-6">
+          <motion.div 
+            className="space-y-6"
+            variants={slideFromLeft}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            custom={0}
+          >
             {/* Logo with animation */}
             <motion.div 
               className="flex items-center space-x-3"
+              variants={slideFromLeft}
+              custom={0}
               whileHover={{}}
               transition={{ duration: 0.2 }}
             >
@@ -28,64 +80,56 @@ const Footer = () => {
 
             {/* Navigation Links with stagger animation */}
             <div className="flex space-x-6">
-              <motion.a
-                href="#"
-                className="text-white/70 hover:text-gray-300 transition-colors relative"
-                whileHover={{ color: '#10B981' }}
-                transition={{ duration: 0.2 }}
-              >
-                About Us
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-green-400"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-              <motion.a
-                href="#"
-                className="text-white/70 hover:text-gray-300 transition-colors relative"
-                whileHover={{ color: '#10B981' }}
-                transition={{ duration: 0.2 }}
-              >
-                Product
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-purple-400"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
-              <motion.a
-                href="#"
-                className="text-white/70 hover:text-gray-300 transition-colors relative"
-                whileHover={{ color: '#10B981' }}
-                transition={{ duration: 0.2 }}
-              >
-                FAQ
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-green-400"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.a>
+              {['About Us', 'Product', 'FAQ'].map((linkText, index) => (
+                <motion.a
+                  key={linkText}
+                  href="#"
+                  className="text-white/70 hover:text-gray-300 transition-colors relative"
+                  variants={slideFromLeft}
+                  custom={index + 1}
+                  whileHover={{ color: '#10B981' }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {linkText}
+                  <motion.div
+                    className={`absolute bottom-0 left-0 h-0.5 ${index === 1 ? 'bg-purple-400' : 'bg-green-400'}`}
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.a>
+              ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Second Column - Newsletter Subscription */}
-          <motion.div>
+          <motion.div
+            variants={slideFromBottom}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            custom={0}
+          >
             <motion.h4 
               className="text-gray-400 text-sm font-medium mb-4"
+              variants={slideFromBottom}
+              custom={0}
               whileHover={{ color: '#10B981' }}
               transition={{ duration: 0.2 }}
             >
               Newsletter
             </motion.h4>
-            <p className="text-white/70 text-sm mb-4">
+            <motion.p 
+              className="text-white/70 text-sm mb-4"
+              variants={slideFromBottom}
+              custom={1}
+            >
               Subscribe to our newsletter for updates
-            </p>
-            <div className="flex">
+            </motion.p>
+            <motion.div 
+              className="flex"
+              variants={slideFromBottom}
+              custom={2}
+            >
               <motion.input
                 type="email"
                 placeholder="Enter your email"
@@ -106,13 +150,21 @@ const Footer = () => {
               >
                 Subscribe
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Social Media */}
-          <div className="space-y-4 ml-20">
+          <motion.div 
+            className="space-y-4 ml-20"
+            variants={slideFromRight}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            custom={0}
+          >
             <motion.h4 
               className="text-gray-400 text-sm font-medium mb-4"
+              variants={slideFromRight}
+              custom={0}
               whileHover={{}}
               transition={{ duration: 0.2 }}
             >
@@ -120,7 +172,11 @@ const Footer = () => {
             </motion.h4>
             <ul className="space-y-2">
               {['Linkedin', 'Facebook', 'Instagram', 'Twitter', 'Youtube'].map((social, index) => (
-                <motion.li key={social}>
+                <motion.li 
+                  key={social}
+                  variants={slideFromRight}
+                  custom={index + 1}
+                >
                   <motion.a
                     href="#"
                     className="text-white/70 hover:text-gray-300 transition-colors text-sm relative inline-block"
@@ -140,26 +196,44 @@ const Footer = () => {
                 </motion.li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Fourth Column - Contact Info and Address */}
-          <div className="space-y-6">
+          <motion.div 
+            className="space-y-6"
+            variants={slideFromRight}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            custom={0}
+          >
             {/* Contact Info */}
             <div>
               <motion.h4 
                 className="text-gray-400 text-sm font-medium mb-4"
+                variants={slideFromRight}
+                custom={0}
                 whileHover={{ }}
                 transition={{ duration: 0.2 }}
               >
                 Contact Info
               </motion.h4>
               <ul className="space-y-2">
-                <motion.li whileHover={{ color: '#10B981' }} transition={{ duration: 0.2 }}>
+                <motion.li 
+                  variants={slideFromRight}
+                  custom={1}
+                  whileHover={{ color: '#10B981' }} 
+                  transition={{ duration: 0.2 }}
+                >
                   <span className="text-white/70 text-sm">
                     +88 0324234234
                   </span>
                 </motion.li>
-                <motion.li whileHover={{ color: '#10B981' }} transition={{ duration: 0.2 }}>
+                <motion.li 
+                  variants={slideFromRight}
+                  custom={2}
+                  whileHover={{ color: '#10B981' }} 
+                  transition={{ duration: 0.2 }}
+                >
                   <span className="text-white/70 text-sm">
                     hello@fibostudio.com
                   </span>
@@ -171,6 +245,8 @@ const Footer = () => {
             <div>
               <motion.h4 
                 className="text-gray-400 text-sm font-medium mb-4"
+                variants={slideFromRight}
+                custom={3}
                 whileHover={{}}
                 transition={{ duration: 0.2 }}
               >
@@ -178,16 +254,24 @@ const Footer = () => {
               </motion.h4>
               <motion.p 
                 className="text-white/70 text-sm"
+                variants={slideFromRight}
+                custom={4}
                 whileHover={{color: '#10B981'}}
                 transition={{ duration: 0.2 }}
               >
                 336 East Shewrapara, Mirpur, Dhaka, Bangladesh
               </motion.p>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="w-full flex items-center justify-center mt-30">
+        <motion.div 
+          className="w-full flex items-center justify-center mt-30"
+          variants={slideFromBottom}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          custom={5}
+        >
           <motion.span
             className="text-[140px] lg:text-[152px] font-bold select-none leading-tight tracking-tighter cursor-pointer scale-[1.02]"
             style={{
@@ -205,15 +289,21 @@ const Footer = () => {
           >
             Waste Management
           </motion.span>
-        </div>
+        </motion.div>
 
         {/* Bottom Section - Copyright and Policies */}
         <motion.div 
           className="border-t border-gray-800 mt-2 pt-8"
+          variants={slideFromBottom}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          custom={6}
         >
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <motion.div 
               className="text-sm text-gray-500"
+              variants={slideFromLeft}
+              custom={7}
               whileHover={{ color: '#9CA3AF' }}
               transition={{ duration: 0.2 }}
             >
@@ -225,6 +315,8 @@ const Footer = () => {
                   key={policy}
                   href="#"
                   className="text-gray-500 hover:text-gray-300 transition-colors relative"
+                  variants={slideFromRight}
+                  custom={index + 8}
                   whileHover={{
                     color: '#10B981'
                   }}
