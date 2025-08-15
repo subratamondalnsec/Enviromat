@@ -6,7 +6,9 @@ const {uploadImageToCloudinary}=require("../utils/imageUploader")
 
 exports.getAllItems = async (req, res) => {
   try {
-    const orders = await Order.find({ deliveryStatus: "listed" });
+    const orders = await Order.find({
+      $expr: { $lt: ["$product.totalSold", "$product.quantity"] }
+    });
     res.status(200).json({ success: true, count: orders.length, orders });
   } catch (error) {
     console.error("Error fetching all items:", error);
@@ -14,30 +16,27 @@ exports.getAllItems = async (req, res) => {
   }
 };
 
-/**
- * 1️⃣ Seller creates a new item listing
- */
+
 exports.createOrder = async (req, res) => {
   try {
-    const { sellerId, product,image, address } = req.body;
-
-    // const file=req.file.image;
-    // const result = await uploadImageToCloudinary(file,process.env.CLOUDINARY_FOLDER);
+    const { sellerId, product, image, address } = req.body;
 
     const newOrder = new Order({
       sellerId,
       product,
       address,
       image,
-      deliveryStatus: "listed", // Initial status when created
+      orderedAt: new Date()
     });
 
     await newOrder.save();
 
     // Add to seller's sellingOrders
-    await User.findByIdAndUpdate(sellerId, {
-      $push: { sellingOrders: newOrder._id },
-    });
+    const user=await User.findByIdAndUpdate(sellerId, {
+      $push: { sellingOrders: newOrder._id }
+    },{new:true});
+
+    console.log("Order created successfully",newOrder,user);
 
     res.status(201).json({ message: "Order created successfully", order: newOrder });
   } catch (error) {
@@ -46,54 +45,48 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-/**
- * 2️⃣ Buyer requests an item for purchase
- */
+
 exports.requestOrder = async (req, res) => {
   try {
-    const { buyerId, orderId, address } = req.body;
+    const { buyerId, orderId, quantity, price, address } = req.body;
+
     const order = await Order.findById(orderId);
-    console.log("Order found:", order);
+    if (!order) return res.status(404).json({ message: "Order not found" });
 
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+    // Check stock
+    if (order.product.totalSold + quantity > order.product.quantity) {
+      return res.status(400).json({ message: "Not enough stock available" });
     }
 
-    if (order.buyerId || order.isInCart) {
-      return res.status(400).json({ message: "Order already requested or added to card" });
-    }
+    // Add buyer details
+    order.buyerDetails.push({
+      buyerId,
+      quantity,
+      price,
+      address: address,
+      paymentStatus: "pending",
+      deliveryStatus: "requested"
+    });
 
-    // Check if orderId exists in buyer's addToCards
-    const buyer = await User.findById(buyerId);
-    if (!buyer || !buyer.addToCards || !buyer.addToCards.includes(orderId)) {
-      return res.status(400).json({ message: "Order not found in your cart" });
-    }
-
-    order.buyerId = buyerId;
-    order.plasedOn = address;
-    order.deliveryStatus = "requested";
+    // Update stock
+    order.product.totalSold += quantity;
     order.orderedAt = new Date();
 
     await order.save();
 
-    // Add to buyer's orderRequests and remove from addToCards if present
-    editBuyer = await User.findByIdAndUpdate(
-      buyerId,
-      {
+    // Update buyer's orders
+    const user=await User.findByIdAndUpdate(buyerId, {
       $push: { orderRequests: order._id },
       $pull: { addToCards: order._id }
-      },
-      { new: true }
-    );
-
-    console.log("Order requested successfully:", order, "Buyer:", editBuyer);
-
+    },{new:true});
+    console.log("Order requested successfully",order,user);
     res.json({ message: "Order requested successfully", order });
   } catch (error) {
     console.error("Error requesting order:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 /**
  * 3️⃣ Buyer adds an item to their cart (for later purchase)
@@ -107,12 +100,6 @@ exports.addToCard = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    if (order.isInCart) {
-      return res.status(400).json({ message: "Item already in cart" });
-    }
-
-    order.isInCart = true;
-    await order.save();
 
     const buyer=await User.findByIdAndUpdate(buyerId, {
       $push: { addToCards: order._id },
@@ -126,46 +113,45 @@ exports.addToCard = async (req, res) => {
   }
 };
 
+
 /**
  * 4️⃣ Buyer cancels a requested order
  */
 exports.cancelRequestOfOrder = async (req, res) => {
   try {
     const { buyerId, orderId } = req.body;
-
     const order = await Order.findById(orderId);
 
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-    if (!order.buyerId || order.buyerId.toString() !== buyerId) {
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    // Find buyer entry
+    const buyerIndex = order.buyerDetails.findIndex(b => b.buyerId.toString() === buyerId);
+    if (buyerIndex === -1) {
       return res.status(403).json({ message: "You have not requested this order" });
     }
 
-    // Remove from buyer's requests
-    const buyer=await User.findByIdAndUpdate(buyerId, {
-      $pull: { orderRequests: order._id },
-    },{ new: true });
+    // Restore stock
+    order.product.totalSold -= order.buyerDetails[buyerIndex].quantity;
 
-    order.buyerId = null;
-    order.address = null;
-    order.deliveryStatus = "listed";
-    order.orderedAt = null;
-    order.isInCart = false; // Reset cart status if needed
+    // Remove buyer from order
+    order.buyerDetails.splice(buyerIndex, 1);
 
-    await order.save();
+    const newOrder=await order.save();
 
-    console.log("Order request cancelled successfully:", order, "Buyer:", buyer);
-    res.json({ message: "Order request cancelled successfully", order});
+    // Remove from buyer's order requests
+    const user=await User.findByIdAndUpdate(buyerId, {
+      $pull: { orderRequests: order._id }
+    });
+    console.log("Order request cancelled successfully",newOrder,user);
+
+    res.json({ message: "Order request cancelled successfully", order });
   } catch (error) {
     console.error("Error cancelling order request:", error);
     res.status(500).json({ message: "Server error" });
   }
-};
+};  
 
-/**
- * 4️⃣ Remove an item from buyer's addToCards (cart)
- */
+
 exports.cancelFromAddToCard = async (req, res) => {
   try {
     const { buyerId, orderId } = req.body;
@@ -183,10 +169,6 @@ exports.cancelFromAddToCard = async (req, res) => {
       { new: true }
     );
 
-    // Update order's isInCart status
-    order.isInCart = false;
-    await order.save();
-
     console.log("Order removed from cart successfully:", order, "Buyer:", buyer);
 
     res.json({ message: "Order removed from cart successfully", order });
@@ -201,13 +183,7 @@ exports.cancelFromAddToCard = async (req, res) => {
 exports.getAllOrdersByUser = async (req, res) => {
   try {
     const { userId } = req.params;
-
-    const user = await User.findById(userId).populate("orderRequests");
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    const orders = user.orderRequests;
+    const orders = await Order.find({ "buyerDetails.buyerId": userId });
 
     res.status(200).json({
       success: true,

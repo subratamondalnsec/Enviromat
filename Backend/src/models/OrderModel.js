@@ -1,17 +1,52 @@
-const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   sellerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Seller who lists the item
+    ref: "User",
     required: true,
   },
-  buyerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Buyer who requests the item
-    default: null, // null if no buyer yet
-  },
+  buyerDetails: [
+    {
+      buyerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1
+      },
+      price: {
+        type: Number,
+        required: true,
+        min: 0
+      },
+      address: { // fixed spelling
+        type: String,
+        required:true
+      },
+      paymentStatus: {
+        type: String,
+        enum: ["pending", "paid", "failed"],
+        default: "pending",
+      },
+      deliveryStatus: {
+        type: String,
+        enum: [ "requested", "delivered"], // fixed enum
+        default: "requested",
+      },
+      deliveredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Picker",
+        default: null,
+      },
+      deliveredAt: {
+        type: Date,
+      },
+    },
+  ],
   product: {
     quantity: {
       type: Number,
@@ -34,42 +69,26 @@ const orderSchema = new mongoose.Schema({
       ],
       required: true,
     },
+    price:{
+      type: Number,
+      required: true,
+      min: 50
+    },
+    totalSold:{
+      type: Number,
+      required: true,
+      default:0
+    }
   },
   address: {
-    type: String, // collect orde from seller at address
-  },
-  plasedOn:{   // address where the order was placed
-    type:String,
-    default:null,
-  },
-  paymentStatus: {
     type: String,
-    enum: ["pending", "paid", "failed"],
-    default: "pending",
   },
-  deliveryStatus: {
+  image: {
     type: String,
-    enum: ["listed", "requested", "delivered"],
-    default: "listed", // Seller created but no buyer yet
-  },
-  deliveredBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Picker", // who delivered this order
-    default: null,
-  },
-  image:{
-    type:String,
-    required:true
+    required: true
   },
   orderedAt: {
     type: Date,
-  },
-  deliveredAt: {
-    type: Date,
-  },
-  isInCart: {
-    type: Boolean,
-    default: false, // Used for addToCart
   },
 });
 
