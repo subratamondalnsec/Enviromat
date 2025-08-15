@@ -53,7 +53,6 @@ app.use("/api/v1/waste", wasteRoute);
 app.use("/api/v1/blogs", blogRoutes);
 
 
-
 // app.get("/", (req, res) => {
 // 	return res.json({
 // 		success: true,

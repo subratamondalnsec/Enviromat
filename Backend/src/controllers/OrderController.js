@@ -48,11 +48,16 @@ exports.createOrder = async (req, res) => {
 
 exports.requestOrder = async (req, res) => {
   try {
-    const { buyerId, orderId, quantity, price, address } = req.body;
+    const { buyerId, orderId, quantity, totalPrice, address } = req.body;
 
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
+    // Validate totalPrice
+    if (totalPrice !== order.product.price * quantity) {
+      return res.status(400).json({ message: "Total price mismatch" });
+    }
+    
     // Check stock
     if (order.product.totalSold + quantity > order.product.quantity) {
       return res.status(400).json({ message: "Not enough stock available" });
@@ -62,7 +67,7 @@ exports.requestOrder = async (req, res) => {
     order.buyerDetails.push({
       buyerId,
       quantity,
-      price,
+      price:totalPrice,
       address: address,
       paymentStatus: "pending",
       deliveryStatus: "requested"
@@ -87,7 +92,6 @@ exports.requestOrder = async (req, res) => {
   }
 };
 
-
 /**
  * 3️⃣ Buyer adds an item to their cart (for later purchase)
  */
@@ -105,7 +109,7 @@ exports.addToCard = async (req, res) => {
       $push: { addToCards: order._id },
     }, { new: true });
 
-    console.log("Order added to cart:", order," buyer:",buyer);
+    console.log("Order added to cart.", "buyer:",buyer);
     res.json({ message: "Item added to cart", order });
   } catch (error) {
     console.error("Error adding to cart:", error);
@@ -150,7 +154,6 @@ exports.cancelRequestOfOrder = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };  
-
 
 exports.cancelFromAddToCard = async (req, res) => {
   try {
@@ -215,90 +218,5 @@ exports.getAllAddToCardsByUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-
-const orders=[
-  {
-    "product": {
-      "quantity": 2,
-      "category": "Recycled Plastic Products"
-    },
-    "address": "123 Eco Street, Green City",
-    "image": "https://example.com/images/recycled-plastic-chair.jpg"
-  },
-  {
-    "product": {
-      "quantity": 5,
-      "category": "Recycled Paper Products"
-    },
-    "address": "456 Paper Lane, Sustainable Town",
-    "image": "https://example.com/images/recycled-paper-notebook.jpg"
-  },
-  {
-    "product": {
-      "quantity": 1,
-      "category": "Recycled Glass Products"
-    },
-    "address": "789 Glass Avenue, ZeroWaste City",
-    "image": "https://example.com/images/recycled-glass-vase.jpg"
-  },
-  {
-    "product": {
-      "quantity": 3,
-      "category": "Recycled Metal Products"
-    },
-    "address": "321 Metal Road, GreenTown",
-    "image": "https://example.com/images/recycled-metal-bottle.jpg"
-  },
-  {
-    "product": {
-      "quantity": 4,
-      "category": "Recycled Textile & Fabric Products"
-    },
-    "address": "654 Fabric Street, EcoVillage",
-    "image": "https://example.com/images/recycled-fabric-bag.jpg"
-  }
-];
-
-
-// 5️⃣ Create multiple orders at once
-exports.createmultiplkeOrder = async (req, res) => {
-  try {
-    // orders should be an array of order objects
-
-    const { userId } = req.body;
-
-    if (!userId || !orders || !Array.isArray(orders) || orders.length === 0) {
-      return res.status(400).json({ message: "Invalid input data" });
-    }
-
-    // Create all orders in one go
-    const createdOrders = await Order.insertMany(
-      orders.map(order => ({
-        ...order,
-        sellerId:userId
-      }))
-    );
-
-    // Get IDs of created orders
-    const orderIds = createdOrders.map(order => order._id);
-
-    // Update user addToCard array
-    await User.findByIdAndUpdate(
-      userId,
-      { $push: { sellingOrders: { $each: orderIds } } },
-      { new: true }
-    );
-
-    res.status(201).json({
-      message: "Orders created successfully",
-      createdOrders
-    });
-
-  } catch (error) {
-    console.error("Error creating multiple orders:", error);
-    res.status(500).json({ message: "Internal server error" });
   }
 };

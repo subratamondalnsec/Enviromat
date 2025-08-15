@@ -29,7 +29,4 @@ router.post('/cancel-from-addtocard',cancelFromAddToCard)
 // get all items listed items to show in shop
 router.get("/get-items",getAllItems);
 
-// create all order at a time
-router.post("/create-all-orders",createmultiplkeOrder);
-
 module.exports = router;

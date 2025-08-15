@@ -31,8 +31,6 @@ router.post("/signup", signup)
 router.post("/sendotp", sendotp)
 router.post("/changepassword", auth, changePassword)
 router.post("/logout", logout)
-
-
 // Route for generating a reset password token
 router.post("/reset-password-token", resetPasswordToken)
 

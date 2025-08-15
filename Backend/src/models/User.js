@@ -33,8 +33,10 @@ const userSchema = new mongoose.Schema({
       default: "User",
       required: true,
     },
-    token: {
-      type: String,
+    creditPoint: {
+      type: Number,
+      min:100,
+      default:500
     },
     resetPasswordExpires: {
       type: Date,
